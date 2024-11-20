@@ -1,0 +1,6 @@
+fastapi[standard]
+python-jose[cryptography]
+passlib
+python-multipart
+python-dotenv
+requests

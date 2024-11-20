@@ -1,0 +1,28 @@
+{% extends "index.html" %}
+
+{% block header_scripts %}
+    {% include "script-set-token.html" %}
+{% endblock %}
+
+{% block body %}
+    <section class="bat-main-content is-flex is-align-items-center">
+        <div class="container">
+            <div class="columns is-flex is-justify-content-center">
+                <div class="column is-one-third has-text-centered">
+                    <img class="footer-logo"
+                        src="{{ url_for("images", path="bat-logo-transparent.png") }}"
+                        alt="OneKingdom Bat Tool Logo"
+                        style="max-width: 70px;"
+                    >
+                    <h2 class="title is-2 pt-5">Loading...</h2>
+                    <p>Please wait, we will redirect you shortly.</p>
+                </div>       
+            </div>
+        </div>
+    </section>
+    <script>
+        const requestedUrl = "{{ path }}";
+    </script>
+    <script src="{{ url_for("js", path="htmx-redirect.js") }}">
+    </script>
+{% endblock %}

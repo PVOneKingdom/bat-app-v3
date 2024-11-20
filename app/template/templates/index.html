@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Page Title{% endblock %} | BAT Tool</title>
+        <meta name="description" content="{% block description %}Description{% endblock %}">
+        <link rel="icon" href="{{ url_for("images", path="bat-favicon.webp") }}">
+        <link href="{{ url_for("css", path="bulma.min.css") }}" rel="stylesheet">
+        <link href="{{ url_for("css", path="style.css") }}" rel="stylesheet">
+        <script src="{{ url_for("js", path="htmx.min.js") }}"></script>
+        <script src="{{ url_for("js", path="json-enc.js") }}"></script>
+
+        {% block header_scripts %}
+        {% endblock %}
+
+    </head>
+    <body>
+        {% block menu %}
+            {% include "menu.html" %}
+        {% endblock %}
+
+        {% block body %}
+        {% endblock %}
+
+        {% block footer %}
+            {% include "footer.html" %}
+        {% endblock %}
+
+        {% block footer_scripts %}
+        {% endblock %}
+    </body>
+</html>
