@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
+from app.model.user import UserLogin
 from app.template.init import jinja
 
 
@@ -25,6 +26,23 @@ def homepage_get(request: Request):
  
 @router.get("/login", response_class=HTMLResponse, name="login_page")
 def login_page_get(request: Request):
+    
+    context = {
+            "request": request,
+            }
+
+    response = jinja.TemplateResponse(
+            name="public/login.html",
+            context=context,
+            )
+
+    return response
+
+
+@router.post("/login", response_class=HTMLResponse)
+def login_page_post(credentials: UserLogin, request: Request):
+
+    print(credentials)
     
     context = {
             "request": request,

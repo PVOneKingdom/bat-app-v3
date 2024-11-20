@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block description %}{{ description }}{% endblock %}
+
+
+{% block body %}
+<section class="bat-main-content is-flex is-align-items-center">
+    <div class="container">
+        <div class="columns is-flex is-justify-content-center">
+            <div class="column is-one-third content">
+                <div class="is-flex is-justify-content-center">
+                    <img width="100" src="{{ url_for("images", path="bat-logo-transparent.png") }}" alt="OK BAT Logo">
+                </div>
+                <h1 class="is-title is-1">Benchmark Assessment Tool</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper sodales magna, ut viverra orci auctor vel.</p>
+                <p>Porta accumsan ante suscipit. Quisque pretium in ligula eu feugiat.</p>
+                <div class="has-text-centered">
+                    <a href="{{ url_for("login_page") }}">
+                        <button class="button is-info">
+                            Log in
+                        </button>
+                    </a>
+                </div>
+            </div>       
+        </div>
+    </div>
+</section>
+{% endblock %}
+

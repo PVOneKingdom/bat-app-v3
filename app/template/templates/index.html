@@ -16,16 +16,22 @@
 
     </head>
     <body>
+        <div class="bat-menu">
         {% block menu %}
             {% include "menu.html" %}
         {% endblock %}
+        </div>
 
+        <div class="bat-content">
         {% block body %}
         {% endblock %}
+        </div>
 
+        <div class="bat-footer">
         {% block footer %}
             {% include "footer.html" %}
         {% endblock %}
+        </div>
 
         {% block footer_scripts %}
         {% endblock %}

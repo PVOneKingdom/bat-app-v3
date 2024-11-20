@@ -1,0 +1,54 @@
+{% extends "index.html" %}
+
+{# HEADER PART #}
+{% block title %}{{ title }}{% endblock %}
+{% block description %}{{ description }}{% endblock %}
+
+
+{# CONTENT #}
+{% block body %}
+<section class="bat-main-content is-flex is-align-items-center">
+    <div class="container">
+        <div class="columns is-flex is-justify-content-center">
+            <div class="column is-one-third content">
+                <div class="is-flex is-justify-content-center">
+                    <img width="100" src="{{ url_for("images", path="bat-logo-transparent.png") }}" alt="OK BAT Logo">
+                </div>
+                <h1 class="is-title is-1 has-text-centered">Log in</h1>
+                {% if logout_notification == 1 %}
+                <div class="notification is-success">
+                    You have successfully logged out.
+                </div>
+                {% endif %}
+                <form id="bat-login-form"
+                    hx-post="{{ url_for("login_page") }}"
+                    hx-ext="json-enc"
+                    hx-swap="none">
+                    <div class="field">
+                        <label class="label">Username</label>
+                        <div class="control">
+                            <input class="input" name="username" type="text" >
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Password</label>
+                        <div class="control">
+                            <input class="input" name="password" type="password">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <p class="bat-login-info help is-danger"></p>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <button id="login-button" class="button is-info px-6">Login</button>
+                        </div>
+                    </div>
+                </form>           
+            </div>       
+        </div>
+    </div>
+</section>
+{% endblock %}

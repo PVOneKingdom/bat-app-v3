@@ -1,0 +1,23 @@
+<section class="has-background-text-95">
+    <div class="container">
+        <nav class="navbar has-background-text-95" hx-boost="true">
+            <div class="navbar-brand p-3">
+                <a href="{{ url_for("homepage") }}">
+                    <img class="navbar-logo" src="{{ url_for("images", path="bat-logo-300x66.png") }}" alt="OneKingdom Bat Tool Logo">
+                </a>
+            </div>
+            <div class="navbar-menu">
+                <div class="navbar-end">
+                    {% block menu_list %}
+                    <a href="{{ url_for("homepage") }}" class="navbar-item {% if request.url == url_for("homepage") %} has-text-weight-bold {% endif %}">
+                        Homepage
+                    </a>
+                    <a href="{{ url_for("login_page") }}" class="navbar-item {% if request.url == url_for("login_page") %} has-text-weight-bold {% endif %}">
+                        Login
+                    </a>
+                    {% endblock %}
+                </div>
+            </div>
+        </nav>
+    </div>
+</section>
