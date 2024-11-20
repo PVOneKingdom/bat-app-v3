@@ -24,7 +24,13 @@ def row_to_model(row: tuple) -> User:
 
 
 def model_to_dict(user: User) -> dict:
-    return user.model_dump()
+    return {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "hash": user.hash,
+            "role": user.role.value,
+            }
 
 
 def get_one(id: str | None) -> User:

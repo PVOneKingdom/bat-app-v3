@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from enum import Enum
 from typing import Optional
 
 
-class UserRole(Enum):
+class UserRoleEnum(Enum):
     admin = "admin"
     coach = "coach"
     user  = "user"
@@ -15,8 +15,15 @@ class UserLogin(BaseModel):
 
 
 class User(BaseModel):
-    id: Optional[str]
+    id: Optional[str] = Field(..., max_length=36, min_length=36)
     username: str
     email: str
     hash: str
-    role: UserRole
+    role: UserRoleEnum
+
+class UserCreate(BaseModel):
+    id: Optional[str] = Field(..., max_length=36, min_length=36)
+    username: str
+    email: str
+    password: str = Field(..., min_length=12, max_length=128)
+    role: UserRoleEnum

@@ -15,19 +15,17 @@
                     <img width="100" src="{{ url_for("images", path="bat-logo-transparent.png") }}" alt="OK BAT Logo">
                 </div>
                 <h1 class="is-title is-1 has-text-centered">Log in</h1>
-                {% if logout_notification == 1 %}
-                <div class="notification is-success">
-                    You have successfully logged out.
-                </div>
-                {% endif %}
-                <form id="bat-login-form"
+                {% include "notification.html" %}
+                <form id="bat-login-form" class"form"
                     hx-post="{{ url_for("login_page") }}"
-                    hx-ext="json-enc"
-                    hx-swap="none">
+                    hx-select=".bat-main-content"
+                    hx-target=".bat-main-content"
+                    hx-swap="outerHTML"
+                    hx-ext="json-enc">
                     <div class="field">
                         <label class="label">Username</label>
                         <div class="control">
-                            <input class="input" name="username" type="text" >
+                            <input class="input" name="username" type="text" {% if username %}value="{{ username }}"{% endif %}>
                         </div>
                     </div>
                     <div class="field">
@@ -41,7 +39,7 @@
                             <p class="bat-login-info help is-danger"></p>
                         </div>
                     </div>
-                    <div class="field">
+                    <div class="field is-flex is-justify-content-flex-end">
                         <div class="control">
                             <button id="login-button" class="button is-info px-6">Login</button>
                         </div>
@@ -51,4 +49,8 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block footer_scripts %}
+<script src="{{ url_for("js", path="htmx-process-errors.js") }}"></script>
 {% endblock %}

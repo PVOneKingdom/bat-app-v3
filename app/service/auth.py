@@ -1,24 +1,41 @@
+from app.config import ACCESS_TOKEN_EXPIRE_MINUTES, \
+        SECRET_KEY, ALGORITHM
+
 from jose import ExpiredSignatureError, JWTError, jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
+
+from app.exception.service import IncorectCredentials, InvalidBearerToken
+from app.model.user import User
+
+# Function to retrieve the user and pasword hash
+from app.data.user import get_one as get_user_by_id
+from app.data.user import get_by as get_user_by
+
+
+"""From all of this, there are 2 main functions to keep in mind.
+1) handle_token_creation()
+    - takes in username and password and creates token if credentials valid
+2) get_current_user()
+    - takes in token and returns user if token is valid"""
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def verify_password(plain: str, hash: str) -> bool:
-    return pwd_context.verify(plain, hash)
+def verify_password(password: str, hash: str) -> bool:
+    return pwd_context.verify(password, hash)
 
 
 def get_password_hash(plain: str) -> str:
     return pwd_context.hash(plain)
 
 
-def get_jwt_username(token:str) -> str | None:
-    """Return username from JWT access <token>"""
+def jwt_to_user_id(token:str) -> str | None:
+    """Return user id from JWT access <token>"""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        if not (username := payload.get("sub")):
+        if not (username := payload.get("id")):
             return None
     except ExpiredSignatureError:
         raise InvalidBearerToken(msg="Token is expired.")
@@ -27,57 +44,51 @@ def get_jwt_username(token:str) -> str | None:
     return username
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None ) -> Token:
+
+def generate_bearer_token(data: dict, expires_delta: timedelta | None = None ) -> str:
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
         expire = datetime.now(timezone.utc) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    token: Token = Token(
-            access_token=jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM),
-            token_type="Bearer"
-            )
-    return token
+    token_value = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    bearer_token = f"Bearer {token_value}"
+    return bearer_token
 
 
-def auth_user(username: str, plain: str) -> User:
+def auth_user(username: str, password: str) -> User:
     """Authenticate user <name> and <plain> password"""
-    user: User = lookup_user(username=username)
-    if not verify_password(plain, user.hash):
+    user: User = get_user_by(field="username", value=username)
+    if not verify_password(password=password, hash=user.hash):
         raise IncorectCredentials("Incorrect Credentials")
     return user
 
-def handle_token_creation(username:str, plain:str) -> Token:
-    
+def handle_token_creation(username:str, password:str) -> str:
+    """Handles creation on the sign in. Takes in username and password and returns 
+    bearer token: Bearer <token-value>."""
     # Checks username and password validity
-    user: User = auth_user(username=username, plain=plain)
+    user: User = auth_user(username=username, password=password)
     expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    token: Token = create_access_token(data={"sub":user.username}, expires_delta=expires_delta)
+    token: str = generate_bearer_token(data={"id":user.id}, expires_delta=expires_delta)
     return token
 
     
 
 # -------------------------------------
-#   Stripping down public user
+#   Retrieving the User Object
 # -------------------------------------
 
-def lookup_user(username: str) -> User:
-    """Return a matching User fron the database for <name>"""
-    user: User = data.get_by(field="username", value=username)
+def lookup_user(id: str) -> User:
+    """Return a matching User fron the database for ID"""
+    user: User = get_user_by_id(id=id)
     return user
 
-def get_current_user(token: str) -> User:
-    """Decode an OAuth access <token> and return the User"""
-    if not (username := get_jwt_username(token)):
+def get_current_user(token: str) -> User | None:
+    """Dependecy that extracts data from token and returns User object"""
+
+    if not (id := jwt_to_user_id(token)):
         raise InvalidBearerToken("Invalid Bearer Token")
-    if (user := lookup_user(username)):
+    if (user := get_user_by_id(id)):
         return user
 
-def user_to_pub_user(user: User) -> PublicUser:
-    return PublicUser(
-            uuid=user.uuid,
-            username=user.username,
-            email=user.email,
-            role=user.role
-            )
