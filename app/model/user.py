@@ -17,5 +17,6 @@ class UserLogin(BaseModel):
 class User(BaseModel):
     id: Optional[str]
     username: str
+    email: str
     hash: str
     role: UserRole

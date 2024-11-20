@@ -9,7 +9,7 @@ curs.execute("""create table if not exists user(
     username text unique,
     email text unique,
     hash text,
-    role string
+    role text
     )""")
 
 def row_to_model(row: tuple) -> User:
@@ -19,7 +19,7 @@ def row_to_model(row: tuple) -> User:
         username=username,
         email=email,
         hash=hash,
-        role=role,
+        role=role
     )
 
 
@@ -27,7 +27,7 @@ def model_to_dict(user: User) -> dict:
     return user.model_dump()
 
 
-def get_one(id: str) -> User:
+def get_one(id: str | None) -> User:
     qry = "select * from user where id = :id"
     params = {"id": id}
     curs.execute(qry, params)
@@ -65,7 +65,6 @@ def create(user: User) -> User:
         conn.commit()
     except IntegrityError as e:
         conn.rollback()
-        message: str = ""
         if "UNIQUE constraint failed: user.email" in str(e):
             raise UsernameOrEmailNotUnique(msg="Email needs to be unique. Provided e-mail is already in use. Try different one.")
         if "UNIQUE constraint failed: user.username" in str(e):
@@ -81,30 +80,27 @@ def modify(id: str, user_updated: User) -> User:
         hash=:hash,
         role=:role
         where uuid = :uuid"""
-    params = model_to_dict(user)
-    params["uuid"] = uuid
+    params = model_to_dict(user_updated)
+    params["id"] = id
     try:
         _ = curs.execute(qry, params)
         conn.commit()
     except IntegrityError as e:
         conn.rollback()
-        message: str = ""
         if "UNIQUE constraint failed: user.email" in str(e):
             raise UsernameOrEmailNotUnique(msg="Email needs to be unique. Provided e-mail is already in use. Try different one.")
         if "UNIQUE constraint failed: user.username" in str(e):
             raise UsernameOrEmailNotUnique(msg="Username needs to be unique. Provided username is used. Try different one.")
-    updated_user = get_one(uuid)
+    updated_user = get_one(id)
     return updated_user
 
 
-def delete(uuid: str) -> DeletedUser:
-    qry = "delete from user where uuid = :uuid"
+def delete(id: str) -> User:
+    deleted_user = get_one(id)
+    qry = "delete from user where id= :id"
     params = {
-            "uuid": uuid
+            "id": id
         }
     conn.execute(qry, params)
     conn.commit()
-    return DeletedUser(
-        uuid = uuid,
-        deleted = True
-    )
+    return deleted_user
