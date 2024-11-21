@@ -1,0 +1,7 @@
+{% if focus_input_name %}
+<script>
+    setTimeout(()=>{
+        document.querySelector("input[name='{{focus_input_name}}']").focus()
+    }, 200)
+</script>
+{% endif %}

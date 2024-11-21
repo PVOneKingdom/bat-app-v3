@@ -47,6 +47,7 @@ def login_page_post(credentials: UserLogin, request: Request):
 
     context: dict = {
             "request": request,
+            "focus_input_name": "username",
             }
 
     status_code = 200
@@ -72,7 +73,10 @@ def login_page_post(credentials: UserLogin, request: Request):
         context["notification_content"] = "Error occured."
         status_code = 401
 
-
+    if credentials.username:
+        context["username"] = credentials.username
+        context["focus_input_name"] = "password"
+        
 
     response = jinja.TemplateResponse(
             name="public/login.html",

@@ -15,7 +15,7 @@
                     <img width="100" src="{{ url_for("images", path="bat-logo-transparent.png") }}" alt="OK BAT Logo">
                 </div>
                 <h1 class="is-title is-1 has-text-centered">Log in</h1>
-                {% include "notification.html" %}
+                {% include "helpers/notification.html" %}
                 <form id="bat-login-form" class"form"
                     hx-post="{{ url_for("login_page") }}"
                     hx-select=".bat-main-content"
@@ -45,6 +45,7 @@
                         </div>
                     </div>
                 </form>           
+                {% include "helpers/focus-input-name.html" %}
             </div>       
         </div>
     </div>
