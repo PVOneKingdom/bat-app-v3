@@ -67,7 +67,9 @@ def create(user: User) -> User:
     qry = """insert into user(user_id, username, email, hash, role) 
             values( :user_id, :username, :email, :hash, :role)"""
     try:
-        _ = curs.execute(qry, model_to_dict(user))
+        params = model_to_dict(user)
+        params["email"] = params["email"].lower()
+        _ = curs.execute(qry, params)
         conn.commit()
     except IntegrityError as e:
         conn.rollback()
@@ -87,6 +89,7 @@ def modify(user_id: str, user_updated: User) -> User:
         role=:role
         where user_id = :user_id"""
     params = model_to_dict(user_updated)
+    params["email"] = params["email"].lower()
     params["user_id"] = user_id
     try:
         _ = curs.execute(qry, params)
