@@ -5,6 +5,7 @@
     <div class="container">
         {% block body_content %}
         <h2 class="title is-2 has-text-centered">Users</h2>
+        {% include "helpers/notification.html" %}
         <div class="is-flex is-justify-content-center">
             <table class="table is-fullwidth vertical-align">
                 <thead>
@@ -17,16 +18,9 @@
                 </thead>
                 <tbody class="users-table">
                     {% for user in users %}
-                        <tr
-                            class="is-clickable"
-                            hx-get="{{ url_for("dashboard_users_page") }}/{{ user.id }}"
-                            hx-target=".bat-body"
-                            hx-select=".bat-body"
-                            hx-swap="outerHTML"
-                            hx-push-url="true"
-                        >
+                        <tr>
                             <td>
-                                {{ user.username }}{% if current_user.id == user.id %} (you) {% endif %}
+                                {{ user.username }}{% if current_user.user_id == user.user_id %} (you) {% endif %}
                             </td>
                             <td>
                                 <a href="mailto:{{ user.email }}">{{ user.email }}</a>
@@ -37,25 +31,26 @@
                             <td class="is-flex is-flex-direction-row has-gap">
                                 <button
                                     class="button is-warning is-light"
-                                    hx-get="{{ url_for("dashboard_users_page") }}/{{ user.id }}"
+                                    hx-get="{{ url_for("dashboard_users_page") }}/{{ user.user_id }}"
                                     hx-target="body"
                                     hx-swap="outerHTML"
                                     hx-push-url="true"
                                     >
                                     Edit
                                 </button>
-                                {% if current_user.id != user.id %}
+                                {% if current_user.user_id != user.user_id %}
                                 <button
                                     class="button is-danger is-light"
-                                    hx-delete="{{ url_for("dashboard_users_page") }}/{{ user.id }}"
+                                    hx-delete="{{ url_for("dashboard_users_page") }}/{{ user.user_id }}"
                                     hx-confirm="Delete user {{ user.username }}?"
-                                    hx-target=".message-{{ user.id }}"
+                                    hx-select=".bat-body"
+                                    hx-target=".bat-body"
                                     hx-push-url="false"
-                                    hx-swap="innerHTML">
+                                    hx-swap="outerHTML">
                                     Delete
                                 </button>
                                 {% endif %}
-                                <div class="message-{{ user.id }}"></div>
+                                <div class="message-{{ user.user_id }}"></div>
                             </td>
                         </tr>
                     {% endfor %}

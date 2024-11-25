@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from enum import Enum
 from typing import Optional
 from app.model.assesment import Assessment
@@ -16,7 +16,7 @@ class UserLogin(BaseModel):
 
 
 class UserCreate(BaseModel):
-    id: Optional[str] = Field(None, max_length=36, min_length=36)
+    user_id: Optional[str] = Field(None, max_length=36, min_length=36)
     username: str
     email: str
     password: str = Field(..., min_length=12, max_length=128)
@@ -24,14 +24,21 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    id: Optional[str] = Field(None, max_length=36, min_length=36)
+    user_id: Optional[str] = Field(None, max_length=36, min_length=36)
     username: str
     email: str
     password: Optional[str] = Field(None, min_length=12, max_length=128)
     role: UserRoleEnum
 
+    @field_validator("password", mode="before")
+    def empty_string_to_none(cls, value):
+        if value == "":
+            return None
+        return value
+
+
 class User(BaseModel):
-    id: Optional[str] = Field(..., max_length=36, min_length=36)
+    user_id: Optional[str] = Field(..., max_length=36, min_length=36)
     username: str
     email: str
     hash: str
@@ -56,3 +63,28 @@ class User(BaseModel):
         else:
             return False
         return False
+
+    def can_delete_user(self, user_for_deletion) -> bool:
+        if self.role == UserRoleEnum.admin:
+            return True
+        if self.role == UserRoleEnum.coach:
+            return False if user_for_deletion.role == UserRoleEnum.admin else True
+        else:
+            return False
+
+
+    def can_modify_user(self, user_for_modification) -> bool:
+        if self.user_id == user_for_modification.user_id:
+            return True
+        if self.role == UserRoleEnum.admin:
+            return True
+        if (
+            self.role == UserRoleEnum.coach
+            and (
+                user_for_modification.role == UserRoleEnum.coach
+                or user_for_modification.role == UserRoleEnum.user
+                )
+            ):
+            return True
+        else:
+            return False

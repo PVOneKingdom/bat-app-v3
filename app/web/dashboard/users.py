@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Request, Depends, HTTPException, Response
 from fastapi.responses import HTMLResponse
 from app.exception.database import RecordNotFound, UsernameOrEmailNotUnique
-from app.exception.service import Unauthorized
-from app.model.user import User, UserCreate
+from app.exception.service import EndpointDataMismatch, Unauthorized
+from app.model.user import User, UserCreate, UserUpdate
 from app.template.init import jinja
 from app.service.auth import user_htmx_dep
-
+from app.web import prepare_notification
 import app.service.user as service
 
 
@@ -68,20 +68,13 @@ async def add_user_post(request: Request,  new_user: UserCreate,  current_user: 
 
     try:
         created_user: User = service.create(new_user, current_user)
-        context["notification"] = 1
-        context["notification_type"] = "success"
-        context["notification_content"] = f"User {created_user.username} created!"
+        context.update(prepare_notification(True, "success", f"User {created_user.username} created!"))
     except Unauthorized as e:
-        context["notification"] = 1
-        context["notification_type"] = "danger"
-        context["notification_content"] = e.msg
+        context.update(prepare_notification(True, "danger", e.msg))
         status_code = 401
     except UsernameOrEmailNotUnique as e:
-        context["notification"] = 1
-        context["notification_type"] = "warning"
-        context["notification_content"] = e.msg
+        context.update(prepare_notification(True, "warning", e.msg))
         status_code = 403
-
 
     template_response = jinja.TemplateResponse(
             name="dashboard/user-add.html",
@@ -92,12 +85,12 @@ async def add_user_post(request: Request,  new_user: UserCreate,  current_user: 
     return template_response
 
 
-@router.get("/{id}", response_class=HTMLResponse, name="dashboard_user_edit_page")
-async def edit_user(id: str, request: Request, current_user: User = Depends(user_htmx_dep)):
+@router.get("/{user_id}", response_class=HTMLResponse, name="dashboard_user_edit_page")
+async def edit_user(user_id: str, request: Request, current_user: User = Depends(user_htmx_dep)):
 
 
     try:
-        user_for_edit: User = service.get(id=id, current_user=current_user)
+        user_for_edit: User = service.get(user_id=user_id, current_user=current_user)
     except RecordNotFound as e:
         raise HTTPException(status_code=404, detail=e.msg)
     except Unauthorized as e:
@@ -119,57 +112,71 @@ async def edit_user(id: str, request: Request, current_user: User = Depends(user
     return template_response
 
 
-@router.put("/{uuid}", response_class=HTMLResponse)
-async def update_user(uuid: str, updated_user: UserCreate, request: Request, current_user: User = Depends(user_htmx_dep)):
+@router.put("/{user_id}", response_class=HTMLResponse)
+async def update_user(user_id: str, updated_user: UserUpdate, request: Request, current_user: User = Depends(user_htmx_dep)):
 
-    return ""
-
-    try:
-        edited_user: User = service.update(uuid, updated_user, current_user)
-    except RecordNotFound as e:
-        raise HTTPException(status_code=404, detail=e.msg)
-    except Unauthorized as e:
-        raise HTTPException(status_code=403, detail=e.msg)
-    except EndpointDataMismatch as e:
-        raise HTTPException(status_code=403, detail=e.msg)
-    except UsernameOrEmailNotUnique as e:
-        raise HTTPException(status_code=400, detail=e.msg)
-
-    menu  = get_menu(current_user=current_user, request=request)
+    user_for_edit = service.get(user_id=user_id, current_user=current_user)
 
     context = {
             "request": request,
-            "title":f"Edit user: {edited_user.username}",
-            "description":f"Edit details of the {edited_user.username}",
-            "menu": menu,
-            "user_for_edit":edited_user,
             "successful_update": True,
-            "available_roles": current_user.can_grant_roles()
+            "available_roles": current_user.can_grant_roles(),
+            "user_for_edit": user_for_edit,
+            "title": f"Edit user: {user_for_edit.username}",
+            "description": f"Edit details of the {user_for_edit.username}"
             }
 
-    template_response = templates.TemplateResponse(
-            name="dashboard-user-edit.html",
-            context=context
+    status_code = 202
+
+    try:
+        edited_user: User = service.update(user_id, updated_user, current_user)
+        context["user_for_edit"] = edited_user
+        context.update(prepare_notification(True, "success", f"User {edited_user.username} updated!"))
+    except RecordNotFound as e:
+        status_code = 404
+        context.update(prepare_notification(True, "warning", e.msg))
+    except Unauthorized as e:
+        status_code = 401
+        context.update(prepare_notification(True, "danger", e.msg))
+    except EndpointDataMismatch as e:
+        status_code = 403
+        context.update(prepare_notification(True, "danger", e.msg))
+    except UsernameOrEmailNotUnique as e:
+        status_code = 403
+        context.update(prepare_notification(True, "danger", e.msg))
+
+    template_response = jinja.TemplateResponse(
+            name="dashboard/user-edit.html",
+            context=context,
+            status_code=status_code
             )
 
     return template_response
 
 
-@router.delete("/{uuid}", response_class=HTMLResponse)
-async def delete_user(uuid: str, response: Response, current_user: User = Depends(user_htmx_dep)):
+@router.delete("/{user_id}", response_class=HTMLResponse)
+async def delete_user(user_id: str, request: Request, current_user: User = Depends(user_htmx_dep)):
 
-    return ""
+    context = {
+            "request": request,
+            "title":"Users",
+            "description":"List of users and their details.",
+            "current_user": current_user,
+            }
 
     try:
-        deleted_user: DeletedUser = service.delete(uuid, current_user)
+        deleted_user: User = service.delete(user_id, current_user)
+        context.update(prepare_notification(True, "success", f"User {deleted_user.username} was deleted."))
     except RecordNotFound as e:
-        raise HTTPException(status_code=404, detail=e.msg)
+        context.update(prepare_notification(True, "warning", e.msg))
     except Unauthorized as e:
-        raise HTTPException(status_code=403, detail=e.msg)
+        context.update(prepare_notification(True, "danger", e.msg))
 
-    response.headers["HX-Retarget"] = "closest tr"
-    response.headers["HX-Reswap"] = "outerHTML"
-    response.status_code = 202
-    response.body = b''
+    context["users"] = service.get_all(current_user=current_user)
 
-    return response
+    template_response = jinja.TemplateResponse(
+            name="dashboard/users.html",
+            context=context
+            )
+
+    return template_response

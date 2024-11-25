@@ -12,7 +12,7 @@ from app.exception.service import IncorectCredentials, InvalidBearerToken
 from app.model.user import User
 
 # Function to retrieve the user and pasword hash
-from app.data.user import get_one as get_user_by_id
+from app.data.user import get_one as get_user_by_user_id
 from app.data.user import get_by as get_user_by
 
 
@@ -38,7 +38,7 @@ def jwt_to_user_id(token:str) -> str | None:
     """Return user id from JWT access <token>"""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        if not (username := payload.get("id")):
+        if not (username := payload.get("user_id")):
             return None
     except ExpiredSignatureError:
         raise InvalidBearerToken(msg="Token is expired.")
@@ -73,7 +73,7 @@ def handle_token_creation(username:str, password:str) -> str:
     # Checks username and password validity
     user: User = auth_user(username=username, password=password)
     expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    token: str = generate_bearer_token(data={"id":user.id}, expires_delta=expires_delta)
+    token: str = generate_bearer_token(data={"user_id":user.user_id}, expires_delta=expires_delta)
     return token
 
     
@@ -82,17 +82,17 @@ def handle_token_creation(username:str, password:str) -> str:
 #   Retrieving the User Object
 # -------------------------------------
 
-def lookup_user(id: str) -> User:
+def lookup_user(user_id: str) -> User:
     """Return a matching User fron the database for ID"""
-    user: User = get_user_by_id(id=id)
+    user: User = get_user_by_user_id(user_id=user_id)
     return user
 
 def get_current_user(token: str) -> User | None:
     """Dependecy that extracts data from token and returns User object"""
 
-    if not (id := jwt_to_user_id(token)):
+    if not (user_id := jwt_to_user_id(token)):
         raise InvalidBearerToken("Invalid Bearer Token")
-    if (user := get_user_by_id(id)):
+    if (user := get_user_by_user_id(user_id=user_id)):
         return user
 
 

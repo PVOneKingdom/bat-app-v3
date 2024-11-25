@@ -5,7 +5,7 @@ from app.exception.database import RecordNotFound, UsernameOrEmailNotUnique
 
 
 curs.execute("""create table if not exists user(
-    id text PRIMARY KEY,
+    user_id text PRIMARY KEY,
     username text unique,
     email text unique,
     hash text,
@@ -13,9 +13,9 @@ curs.execute("""create table if not exists user(
     )""")
 
 def row_to_model(row: tuple) -> User:
-    id, username, email, hash, role = row
+    user_id, username, email, hash, role = row
     return User(
-        id=id,
+        user_id=user_id,
         username=username,
         email=email,
         hash=hash,
@@ -25,7 +25,7 @@ def row_to_model(row: tuple) -> User:
 
 def model_to_dict(user: User) -> dict:
     return {
-            "id": user.id,
+            "user_id": user.user_id,
             "username": user.username,
             "email": user.email,
             "hash": user.hash,
@@ -33,9 +33,9 @@ def model_to_dict(user: User) -> dict:
             }
 
 
-def get_one(id: str | None) -> User:
-    qry = "select * from user where id = :id"
-    params = {"id": id}
+def get_one(user_id: str | None) -> User:
+    qry = "select * from user where user_id = :user_id"
+    params = {"user_id": user_id}
     curs.execute(qry, params)
     row = curs.fetchone()
     if row:
@@ -64,8 +64,8 @@ def get_by(field: str, value: str|int ) -> User:
 
 
 def create(user: User) -> User:
-    qry = """insert into user(id, username, email, hash, role) 
-            values( :id, :username, :email, :hash, :role)"""
+    qry = """insert into user(user_id, username, email, hash, role) 
+            values( :user_id, :username, :email, :hash, :role)"""
     try:
         _ = curs.execute(qry, model_to_dict(user))
         conn.commit()
@@ -75,19 +75,19 @@ def create(user: User) -> User:
             raise UsernameOrEmailNotUnique(msg="Email needs to be unique. Provided e-mail is already in use. Try different one.")
         if "UNIQUE constraint failed: user.username" in str(e):
             raise UsernameOrEmailNotUnique(msg="Username needs to be unique. Provided username is used. Try different one.")
-    return get_one(user.id)
+    return get_one(user.user_id)
 
 
-def modify(id: str, user_updated: User) -> User:
+def modify(user_id: str, user_updated: User) -> User:
 
     qry = """update user set
         username=:username,
         email=:email,
         hash=:hash,
         role=:role
-        where uuid = :uuid"""
+        where user_id = :user_id"""
     params = model_to_dict(user_updated)
-    params["id"] = id
+    params["user_id"] = user_id
     try:
         _ = curs.execute(qry, params)
         conn.commit()
@@ -97,15 +97,15 @@ def modify(id: str, user_updated: User) -> User:
             raise UsernameOrEmailNotUnique(msg="Email needs to be unique. Provided e-mail is already in use. Try different one.")
         if "UNIQUE constraint failed: user.username" in str(e):
             raise UsernameOrEmailNotUnique(msg="Username needs to be unique. Provided username is used. Try different one.")
-    updated_user = get_one(id)
+    updated_user = get_one(user_id)
     return updated_user
 
 
-def delete(id: str) -> User:
-    deleted_user = get_one(id)
-    qry = "delete from user where id= :id"
+def delete(user_id: str) -> User:
+    deleted_user = get_one(user_id)
+    qry = "delete from user where user_id = :user_id"
     params = {
-            "id": id
+            "user_id": user_id
         }
     conn.execute(qry, params)
     conn.commit()

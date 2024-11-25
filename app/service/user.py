@@ -3,9 +3,9 @@ from app.config import  DEFAULT_USER, \
 
 from app.data import user as data
 from app.exception.database import RecordNotFound
-from app.exception.service import Unauthorized
+from app.exception.service import EndpointDataMismatch, Unauthorized
 from app.service.auth import get_password_hash
-from app.model.user import User, UserCreate, UserRoleEnum
+from app.model.user import User, UserCreate, UserRoleEnum, UserUpdate
 from uuid import uuid4
 
 # -------------------------------
@@ -28,7 +28,7 @@ def add_default_user():
         return 
 
     user_object = User(
-        id=new_uuid,
+        user_id=new_uuid,
         username=username,
         email=email,
         hash=hash,
@@ -52,7 +52,7 @@ def create(user: UserCreate, current_user: User) -> User:
     new_uuid = str(uuid4())
 
     new_user = data.create(User(
-            id=new_uuid,
+            user_id=new_uuid,
             username=user.username,
             email=user.email,
             hash=get_password_hash(user.password),
@@ -62,8 +62,8 @@ def create(user: UserCreate, current_user: User) -> User:
     return new_user
 
 
-def get(id: str, current_user: User) -> User:
-    user = data.get_one(id)
+def get(user_id: str, current_user: User) -> User:
+    user = data.get_one(user_id)
     return user
 
 
@@ -76,27 +76,26 @@ def get_all(current_user: User) -> list[User]:
     return users
 
 
-def delete(uuid: str, current_user: User) -> User:
+def delete(user_id: str, current_user: User) -> User:
 
-    user_for_deletion: User = data.get_one(uuid)
+    user_for_deletion: User = data.get_one(user_id)
     if current_user.can_delete_user(user_for_deletion):
-        deleted_user = data.delete(uuid)
+        deleted_user = data.delete(user_id)
     else:
         raise Unauthorized(msg="You cannot perform this action")
 
     return deleted_user
 
 
-def update(uuid: str, user: UserCreate, current_user: User) -> User:
+def update(user_id: str, user: UserUpdate, current_user: User) -> User:
 
-    return ""
-    if (uuid != user.uuid):
+    if (user_id != user.user_id):
         raise EndpointDataMismatch(msg="Endpoint UUID and data UUID are not matching. Something fishy? Or try contacting your admin.")
 
     if not current_user.can_modify_user(user):
         raise Unauthorized(msg="You cannot modify this user")
 
-    current_data: User = data.get_one(uuid)
+    current_data: User = data.get_one(user_id)
 
     if user.password:
         password_hash = get_password_hash(user.password)
@@ -104,14 +103,13 @@ def update(uuid: str, user: UserCreate, current_user: User) -> User:
         password_hash = current_data.hash
 
     updated_data = User(
-            uuid=user.uuid,
+            user_id=user.user_id,
             username=user.username,
             email=user.email,
             hash=password_hash,
             role=user.role,
             )
 
-    modified_user = data.modify(uuid, updated_data)
+    modified_user = data.modify(user_id, updated_data)
     return modified_user
-
 

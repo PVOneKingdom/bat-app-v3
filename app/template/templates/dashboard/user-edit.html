@@ -8,7 +8,7 @@
         User updated successfully.
     </div>
     {% endif %}
-    <form class="main-form" hx-put="{{ url_for("dashboard_users_page") }}/{{ user_for_edit.id }}" hx-target="body" hx-ext="json-enc">
+    <form class="main-form" hx-put="{{ url_for("dashboard_users_page") }}/{{ user_for_edit.user_id }}" hx-target="body" hx-ext="json-enc">
         <div class="field">
             <label class="label">E-mail</label>
             <div class="control">
@@ -40,7 +40,7 @@
         <div class="field is-hidden">
             <label class="label">ID</label>
             <div class="control">
-                <input name="id" class="input disabled" type="text" value="{{ user_for_edit.id }}" readonly>
+                <input name="user_id" class="input disabled" type="text" value="{{ user_for_edit.user_id }}" readonly>
             </div>
         </div>
         <div class="is-fullwidth pt-4 is-flex is-justify-content-space-around is-flex-direction-row-reverse">
