@@ -7,6 +7,7 @@ from pathlib import Path
 from app.web.public import router as public_router
 from app.web.dashboard.dashboard import router as dashboard_router
 from app.web.dashboard.users import router as dashboard_users_router
+from app.web.dashboard.questions import router as dashboard_questions_router
 
 
 # Main app to start
@@ -25,3 +26,4 @@ app.mount("/images", StaticFiles(directory=static_dir / "static" / "images"), na
 app.include_router(public_router)
 app.include_router(dashboard_router, prefix="/dashboard")
 app.include_router(dashboard_users_router, prefix="/dashboard/users")
+app.include_router(dashboard_questions_router, prefix="/dashboard/questions")

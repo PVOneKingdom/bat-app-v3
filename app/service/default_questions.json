@@ -1,0 +1,639 @@
+[
+    {"beam00": {
+    "title": "Vision and Mission",
+    "segment1": {
+      "question1": {
+        "title": "Our MTM team (all those involved with MTM) has a clearly defined vision and mission.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure / Needs Improvement",
+          "option3": "Yes"
+        },
+        "commentTitle": "Please type your MTM vision/mission statement into the box below.",
+        "commentDescription": ""
+      },
+      "question2": {
+        "title": "We’ve received coaching/training about vision and mission.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure / Needs Improvement",
+          "option3": "Yes"
+        },
+        "commentTitle": "Please share from whom you received your vision/mission coaching.",
+        "commentDescription": ""
+      },
+      "question3": {
+        "title": "Those on our MTM team can articulate the vision and mission.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure / Needs Improvement",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      },
+      "question4": {
+        "title": "We’re satisfied that our current vision and mission accurately reflect our present MTM strategy.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure / Needs Improvement",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      }
+    }
+  }},
+  {"beam01": {
+    "title": "Prayer",
+    "segment1": {
+      "question1": {
+        "title": "We have a prayer strategy.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Please briefly describe your team’s prayer strategy.",
+        "commentDescription": ""
+      },
+      "question2": {
+        "title": "We’ve received prayer strategy coaching/training.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Please tell us where you received your training.",
+        "commentDescription": ""
+      },
+      "question3": {
+        "title": "We regularly pray together and/or engage others to pray for our people group/target audience.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      },
+      "question4": {
+        "title": "We are satisfied with our current prayer strategy and the level of active engagement in it.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      }
+    }
+  }},
+  {"beam02": {
+    "title": "Marketing",
+    "segment1": {
+      "question1": {
+        "title": "We have a marketing plan in place.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Briefly describe your marketing plan.",
+        "commentDescription": ""
+      },
+      "question2": {
+        "title": "We have received coaching/training in Marketing.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Please tell us about the training you received.",
+        "commentDescription": ""
+      },
+      "question3": {
+        "title": "We are marketing content to our target audience on at least one digital platform (Facebook, Instagram, etc) on a consistent basis.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "How often do you post content and how often are you running ads? How much are you spending per month to market content?",
+        "commentDescription": ""
+      },
+      "question4": {
+        "title": "We are satisfied with the results we’re receiving from our current marketing efforts.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      }
+    }
+  }},
+  {"beam03": {
+    "title": "Content Development & Planning",
+    "segment1": {
+      "question1": {
+        "title": "We have a process for creating, organizing, and planning content.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Briefly describe your process.",
+        "commentDescription": ""
+      },
+      "question2": {
+        "title": "We have received content development & planning coaching/training.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "What kinds of training/coaching have you received?",
+        "commentDescription": ""
+      },
+      "question3": {
+        "title": "We are strategically creating original and/or sourcing existing content to plan campaigns.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Tell us about the original content you are creating/have created. What sources are you using for content? What have you found effective?",
+        "commentDescription": ""
+      },
+      "question4": {
+        "title": "We’re satisfied with our current content development and planning process.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Do you have content that you would be willing to share with other teams? Do you have a system for sharing content you create?",
+        "commentDescription": ""
+      }
+    }
+  }},
+  {"beam04": {
+    "title": "Digital Filtering",
+    "segment1": {
+      "question1": {
+        "title": "We have at least one Digital Responder/Filterer.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Tell us about your Digital Responder. Is he/she a national? Have they been trained in multiplicative disciple making?",
+        "commentDescription": ""
+      },
+      "question2": {
+        "title": "Our Digital Responder/Filterer(s) has received coaching/training for and feels competent in his/her role.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "In what areas would the Digital Filterer(s) like more training?",
+        "commentDescription": ""
+      },
+      "question3": {
+        "title": "Our Digital Filterer is regularly engaging in conversations and filtering for spiritual seekers.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "What tools (Echo / Disciple.Tools / Messenger / WhatsApp, etc) is your Digital Filterer using?",
+        "commentDescription": ""
+      },
+      "question4": {
+        "title": "Our current digital filtering process is yielding the desired results.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Are spiritual seekers being assigned to the Dispatcher for follow up? Please tell us more.",
+        "commentDescription": ""
+      }
+    }
+  }},
+  {"beam05": {
+    "title": "Follow-up Data Management",
+    "segment1": {
+      "question1": {
+        "title": "We have a follow-up management system (i.e. Disciple.Tools) in place for keeping up with contacts/spiritual seekers.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Which tools are you using to follow-up with contacts?",
+        "commentDescription": ""
+      },
+      "question2": {
+        "title": "Digital Filterers, Dispatchers, and Multipliers have received follow-up data management coaching/training.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Would any of these roles like additional training in utilizing Disciple.Tools (or Echo)?",
+        "commentDescription": ""
+      },
+      "question3": {
+        "title": "We are regularly assigning, receiving, and providing updates about contacts in the follow-up data management system.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      },
+      "question4": {
+        "title": "We are satisfied with our process/system for following up with spiritual seekers.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      }
+    }
+  }},
+  {"beam06": {
+    "title": "Reporting",
+    "segment1": {
+      "question1": {
+        "title": "We are set up with and have access to Global Movement Metrics (GMM).",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "If so, please provide your unique GMM identifier. If not, would you like to begin the process of getting connected to GMM?",
+        "commentDescription": ""
+      },
+      "question2": {
+        "title": "We have received coaching/training about digital assets and their role in reporting. ",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Who provided your training in the area of reporting?",
+        "commentDescription": ""
+      },
+      "question3": {
+        "title": "We are aware of and consistently completing the MTM quarterly reporting updates.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "If not, are you receiving the quarterly reminders to complete the quarterly updates?",
+        "commentDescription": ""
+      },
+      "question4": {
+        "title": "We are confident in our understanding of Global Movement Metrics and reporting.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Please describe any area where you could use additional training.",
+        "commentDescription": ""
+      }
+    }
+  }},
+  {"beam07": {
+    "title": "Funding",
+    "segment1": {
+      "question1": {
+        "title": "We have an accurate, active and personalized annual budget for MTM.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Approximately, what is your annual budget?",
+        "commentDescription": ""
+      },
+      "question2": {
+        "title": "We have received coaching/training around the topic of funding.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "What kinds of coaching have you received?",
+        "commentDescription": ""
+      },
+      "question3": {
+        "title": "We have access to sufficient funding to cover this year’s budgeted MTM costs.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "What sources of funding have you accessed? (Private, grants, etc?)",
+        "commentDescription": ""
+      },
+      "question4": {
+        "title": "Our source of funding is able to sustain our MTM initiative going forward.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "When do you anticipate needing additional funding?",
+        "commentDescription": ""
+      }
+    }
+  }},
+  {"beam08": {
+    "title": "Multiplication Strategies",
+    "segment1": {
+      "question1": {
+        "title": "We are committed to multiplicative disciple making (i.e. DMM, CPM).",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Please describe your understanding of and commitment to Multiplicative Disciple Making.",
+        "commentDescription": ""
+      },
+      "question2": {
+        "title": "We have  received coaching/training in multiplicative disciple making.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "What training have you received? In what ways has that training impacted your ministry efforts?",
+        "commentDescription": ""
+      },
+      "question3": {
+        "title": "We have a plan/process to train new Multipliers and new believers in multiplicative disciple making (i.e. Zúme).",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Briefly describe your plan.",
+        "commentDescription": ""
+      },
+      "question4": {
+        "title": "We’re confident that our offline disciple making strategy is designed to lead to multiplication.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      }
+    }
+  }},
+  {"beam09": {
+    "title": "Coalition Development",
+    "segment1": {
+      "question1": {
+        "title": "We have a plan for communicating partnership requirements and onboarding new partners.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Do you have coalition documents?",
+        "commentDescription": ""
+      },
+      "question2": {
+        "title": "We have received coalition development coaching/training.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Please describe the training you received.",
+        "commentDescription": ""
+      },
+      "question3": {
+        "title": "We’re regularly identifying, referring and mobilizing potential Multipliers and partners.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Briefly describe your approach.",
+        "commentDescription": ""
+      },
+      "question4": {
+        "title": "We’re satisfied with the current makeup and growth opportunities for our MTM coalition.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      }
+    }
+  }},
+  {"beam10": {
+    "title": "Reach",
+    "segment1": {
+      "question1": {
+        "title": "We have a plan for expanding our reach to other cities where Multipliers live.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Please outline your plan.",
+        "commentDescription": ""
+      },
+      "question2": {
+        "title": "We have received coaching/training about how to expand our reach.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Tell us more about the coaching you received.",
+        "commentDescription": ""
+      },
+      "question3": {
+        "title": "We're actively sharing content and targeting ads to identity seekers in the city(ies) where equipped Multiplers live.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "How many cities / regions do you have multipliers in, including your own? How many Multipliers are in your network?",
+        "commentDescription": ""
+      },
+      "question4": {
+        "title": "We’re satisfied with the fruit we are seeing with our current targeted reach and expansion efforts.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      }
+    }
+  }},
+  {"beam11": {
+    "title": "Outreach Platforms",
+    "segment1": {
+      "question1": {
+        "title": "We have set up at least two outreach platforms (i.e. Website, Facebook, YouTube).",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Share which platforms you are using.",
+        "commentDescription": ""
+      },
+      "question2": {
+        "title": "We have received coaching/training about various outreach platforms and how to use them.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Which training(s) have been especially helpful?",
+        "commentDescription": ""
+      },
+      "question3": {
+        "title": "Our platforms are currently up to date, functioning, and being utilized.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "What is the next platform you would like training in?",
+        "commentDescription": ""
+      },
+      "question4": {
+        "title": "We’re satisfied with the results we are getting from our current outreach platforms.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "Please share one success story related to a platform you are using. Would you be willing to help train others to use the platform(s) you are using?",
+        "commentDescription": ""
+      }
+    }
+  }},
+  {"beam12": {
+    "title": "Accountability Structures",
+    "segment1": {
+      "question1": {
+        "title": "We have coalition documents that outline our vision, mission, and values.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      },
+      "question2": {
+        "title": "We have received coaching about how to remain true to our vision, mission, and values, especially as our coalition grows.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      },
+      "question3": {
+        "title": "Members of our MTM team are abiding by the things outlined in our coalition documents.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      },
+      "question4": {
+        "title": "Our current coalition documents sufficiently provide the accountability structure that our MTM needs.",
+        "description": "",
+        "radio": {
+          "option1": "No",
+          "option2": "Not sure",
+          "option3": "Yes"
+        },
+        "commentTitle": "",
+        "commentDescription": "If you would want to add something to your answer feel free to write it here:"
+      }
+    }
+  }}
+]
