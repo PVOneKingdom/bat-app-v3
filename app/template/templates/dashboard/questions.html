@@ -1,0 +1,46 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block body %}
+<section class="bat-main-content is-flex py-6">
+    <div class="container">
+        {% block body_content %}
+        <h2 class="title is-2 has-text-centered pb-5">{{ title }}</h2>
+        <div class="columns">
+            <div class="column">
+                <div class="button is-link is-light mb-4"
+                    {# hx-get="{{ url_for("reorganize_questions_page") }}" #}
+                    hx-select=".bat-main-content"
+                    hx-target=".bat-main-content"
+                    hx-swap="outerHTML"
+                    hx-push-url="true"
+                >Reorganize
+                    
+                </div>
+                <div class="is-flex is-justify-content-center is-flex-direction-column">
+                    {% for question_category in questions_categories %}
+                    <div class="card p-3 is-clickable bat-hover-scale"
+                        hx-select=".bat-main-content"
+                        hx-get="{{ url_for("dashboard_questions_page") }}/{{ question_category.category_id }}"
+                        hx-push-url="true"
+                        hx-target=".bat-main-content"
+                        hx-swap="outerHTML"
+                    >
+                        <h5 class="title is-5" data-category_order="{{ question_category.category_order }}">{{ question_category.category_order + 1 }}. {{ question_category.category_name }}</h5>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="column is-two-thirds is-flex is-flex-direction-column">
+                <div id="question-editor" class="content">
+                    {% block edit_questions %}
+                    <div class="has-text-centered" style="padding-top:10rem!important;">
+                        <p>Start by selecting the category of the questions.</p>
+                    </div>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </div>
+</section>
+{% endblock %}

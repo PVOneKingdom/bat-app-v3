@@ -3,6 +3,9 @@
         <a href="{{ url_for("dashboard") }}" class="navbar-item {% if request.url == url_for("dashboard") %} has-text-weight-bold {% endif %}">
             Dashboard
         </a>
+        <a href="{{ url_for("dashboard_questions_page") }}" class="navbar-item {% if request.url == url_for("dashboard_questions_page") %} has-text-weight-bold {% endif %}">
+            Questions
+        </a>
         <a href="{{ url_for("dashboard_users_page") }}" class="navbar-item {% if request.url == url_for("dashboard_users_page") %} has-text-weight-bold {% endif %}">
             Users
         </a>
