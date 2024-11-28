@@ -1,0 +1,50 @@
+{% extends "dashboard/questions.html" %}
+
+{% block edit_questions %}
+<div class="content px-4">
+    <div id="question-header" class="is-flex is-justify-content-center is-align-items-center py-6" style="gap: 1rem">
+        {% block question_category_rename %}
+        {% include "helpers/notification.html" %}
+        <h4 class="subtitle is-4 m-0">{{ current_category_name }}</h4>
+        <button class="button is-link is-light"
+            hx-get="{{ request.url }}/rename"
+            hx-select="#question-header"
+            hx-target="#question-header"
+            hx-push-url="true"
+            hx-swap="outerHTML">
+            Rename
+        </button>
+        {% endblock %}
+    </div>
+    {% for question in questions_in_category %}
+    <div class="pb-5">
+        <div class="is-flex is-flex-direction-row">
+            <h6 class="title is-6">{{ question.question_order }}.&nbsp;</h6>
+            <h6 class="title is-6">{{ question.question }}</h6>
+        </div>
+
+        <p>
+        <b>Description:</b><br>
+        {{ question.question_description }}
+        </p>
+        <div class="container pl-4">
+            <ul>
+                <li><b>Agree: </b>{{ question.option_yes }}</li>
+                <li><b>Uncertain: </b>{{ question.option_mid }}</li>
+                <li><b>Disagree: </b>{{ question.option_no }}</li>
+            </ul>
+        </div>
+        <div class="container py-3">
+            <div class="button is-primary ml-6"
+                hx-get="{{ request.url }}/{{ question.question_id }}"
+                hx-select="#question-editor"
+                hx-target="#question-editor"
+                hx-push-url="true"
+                hx-swap="outerHTML">
+                Edit
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
