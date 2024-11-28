@@ -3,10 +3,11 @@ from passlib import context
 from app.exception.service import Unauthorized
 from app.template.init import jinja
 from fastapi.responses import HTMLResponse
-from app.model.question import Question, QuestionCategory, QuestionCategoryRename, QuestionCategoryReorder
+from app.model.question import Question, QuestionCategory, QuestionCategoryRename, QuestionCategoryReorder, QuestionEditContent
 from app.model.user import User
 from app.service import question as service
 from app.service.auth import user_htmx_dep
+from app.web import prepare_notification
 
 
 router = APIRouter()
@@ -86,6 +87,63 @@ def get_question_category_page(category_id: int, request: Request, current_user:
     response = jinja.TemplateResponse(
             context=context,
             name="dashboard/questions-list.html"
+            )
+
+    return response
+
+
+@router.get("/{category_id}/{question_id}", response_class=HTMLResponse)
+def get_question_category_page(category_id: int, question_id: int, request: Request, current_user: User = Depends(user_htmx_dep)):
+
+    try:
+        questions_categories: list[QuestionCategory] = service.get_all_categories(current_user=current_user)
+        question_for_editting: Question = service.get_one(question_id=question_id, current_user=current_user)
+    except:
+        #NotImplemented
+        raise
+    
+    context = {
+            "request": request,
+            "title":"Questions",
+            "description":"Manage questions and their order.",
+            "current_user": current_user,
+            "questions_categories": questions_categories,
+            "question_for_editting": question_for_editting,
+            }
+
+    response = jinja.TemplateResponse(
+            context=context,
+            name="dashboard/question-edit.html"
+            )
+
+    return response
+
+
+@router.put("/{category_id}/{question_id}", response_class=HTMLResponse)
+def put_question_category_page(category_id: int, question_id: int, question_edit_content: QuestionEditContent, request: Request, current_user: User = Depends(user_htmx_dep)):
+
+    context = {
+            "request": request,
+            "title":"Questions",
+            "description":"Manage questions and their order.",
+            "current_user": current_user,
+            }
+
+    try:
+        questions_categories: list[QuestionCategory] = service.get_all_categories(current_user=current_user)
+        question_for_editting: Question = service.update_question_content(question_edit_content=question_edit_content, current_user=current_user)
+        context.update({
+                "questions_categories": questions_categories,
+                "question_for_editting": question_for_editting,
+                })
+        context.update(prepare_notification(True, "success", "Question updated"))
+    except:
+        #NotImplemented
+        raise
+    
+    response = jinja.TemplateResponse(
+            context=context,
+            name="dashboard/question-edit.html"
             )
 
     return response

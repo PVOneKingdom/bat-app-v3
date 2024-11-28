@@ -29,3 +29,11 @@ class QuestionCategoryReorderItem(BaseModel):
 
 class QuestionCategoryReorder(BaseModel):
     reorder_data:  List[QuestionCategoryReorderItem]
+
+class QuestionEditContent(BaseModel):
+    question_id: int
+    question: str
+    question_description: str
+    option_yes: str
+    option_mid: str
+    option_no: str

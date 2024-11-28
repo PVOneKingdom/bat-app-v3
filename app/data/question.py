@@ -1,6 +1,8 @@
 from sqlite3 import Cursor, IntegrityError
+
+from fastapi import params
 from app.data.init import conn, curs
-from app.model.question import Question, QuestionCategory, QuestionCategoryRename, QuestionCategoryReorderItem
+from app.model.question import Question, QuestionCategory, QuestionCategoryRename, QuestionCategoryReorderItem, QuestionEditContent
 from app.model.user import User
 from app.exception.database import RecordNotFound, UsernameOrEmailNotUnique
 
@@ -161,7 +163,51 @@ def reorder_questions_category(category_reorder_item: QuestionCategoryReorderIte
         cursor.close()
 
 
+def get_one(question_id: int) -> Question:
 
+    qry = """select question_id, question, question_description, question_order,
+    option_yes, option_mid, option_no, category_id, category_name,
+    category_order from questions natural join questions_categories
+    where question_id = :question_id"""
+
+    params = {"question_id":question_id}
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(qry, params)
+        row = cursor.fetchone()
+        if row:
+            return row_to_model_question(row)
+        else:
+            raise RecordNotFound(msg="Questions were found.")
+    finally:
+        cursor.close()
+
+def update_question_content(question_edit_content: QuestionEditContent) -> Question:
+    
+    qry = """update questions set
+    question = :question,
+    question_description = :question_description,
+    option_yes = :option_yes,
+    option_mid = :option_mid,
+    option_no = :option_no
+    where question_id = :question_id"""
+
+    params = {
+            "question":question_edit_content.question,
+            "question_description":question_edit_content.question_description,
+            "option_yes":question_edit_content.option_yes,
+            "option_mid":question_edit_content.option_mid,
+            "option_no":question_edit_content.option_no,
+            "question_id":question_edit_content.question_id
+            }
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(qry, params)
+        return get_one(question_id=question_edit_content.question_id)
+    finally:
+        cursor.close()
 # -------------------------------
 #   Default actions
 # -------------------------------

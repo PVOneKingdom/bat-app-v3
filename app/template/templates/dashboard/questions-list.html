@@ -1,58 +1,50 @@
-{% extends "dashboard-questions.html" %}
+{% extends "dashboard/questions.html" %}
+
 {% block edit_questions %}
-<div class="content px-6">
-    <h4 class="subtitle is-4 has-text-centered py-6">{{ question_for_editting.category }}</h4>
-    {% if successful_update  == True %}
-    <div class="notification is-success">
-        Question updated successfully.
+<div class="content px-4">
+    <div id="question-header" class="is-flex is-justify-content-center is-align-items-center py-6" style="gap: 1rem">
+        {% block question_category_rename %}
+        {% include "helpers/notification.html" %}
+        <h4 class="subtitle is-4 m-0">{{ current_category_name }}</h4>
+        <button class="button is-link is-light"
+            hx-get="{{ request.url }}/rename"
+            hx-select="#question-header"
+            hx-target="#question-header"
+            hx-push-url="true"
+            hx-swap="outerHTML">
+            Rename
+        </button>
+        {% endblock %}
     </div>
-    {% endif %}
-    <form class="main-form" hx-put="{{ request.url }}" hx-select="#question-editor" hx-target="#question-editor" hx-replace="outerHTML" hx-ext="json-enc">
-        <div class="field">
-            <label class="label">Question</label>
-            <div class="control">
-                <input name="question" class="input selected-input" type="text" value="{{ question_for_editting.question }}">
+    {% for question in questions_in_category %}
+    <div class="pb-5">
+        <div class="is-flex is-flex-direction-row">
+            <h6 class="title is-6">{{ question.question_order }}.&nbsp;</h6>
+            <h6 class="title is-6">{{ question.question }}</h6>
+        </div>
+
+        <p>
+        <b>Description:</b><br>
+        {{ question.question_description }}
+        </p>
+        <div class="container pl-4">
+            <ul>
+                <li><b>Agree: </b>{{ question.option_yes }}</li>
+                <li><b>Uncertain: </b>{{ question.option_mid }}</li>
+                <li><b>Disagree: </b>{{ question.option_no }}</li>
+            </ul>
+        </div>
+        <div class="container py-3">
+            <div class="button is-primary ml-6"
+                hx-get="{{ request.url }}/{{ question.question_id }}"
+                hx-select="#question-editor"
+                hx-target="#question-editor"
+                hx-push-url="true"
+                hx-swap="outerHTML">
+                Edit
             </div>
         </div>
-        <div class="field">
-            <label class="label">Description</label>
-            <div class="control">
-                <textarea class="textarea" rows="4" name="description">{{ question_for_editting.description }}</textarea>
-            </div>
-        </div>
-        <div class="field">
-            <label class="label">Answer: Yes / Agree</label>
-            <div class="control">
-                <input name="answer_yes" class="input" type="text" value="{{ question_for_editting.answer_yes }}">
-            </div>
-        </div>
-        <div class="field">
-            <label class="label">Answer: Maybe / Uncertain</label>
-            <div class="control">
-                <input name="answer_mid" class="input" type="text" value="{{ question_for_editting.answer_mid }}">
-            </div>
-        </div>
-        <div class="field">
-            <label class="label">Answer No / Disagree</label>
-            <div class="control">
-                <input name="answer_no" class="input" type="text" value="{{ question_for_editting.answer_no }}">
-            </div>
-        </div>
-        <div class="field is-hidden">
-                <input name="id" class="input disabled" type="text" value="{{ question_for_editting.id }}" readonly>
-                <input name="category" class="input disabled" type="text" value="{{ question_for_editting.category }}" readonly>
-                <input name="category_order" class="input disabled" type="number" value="{{ question_for_editting.category_order }}" readonly>
-                <input name="question_order" class="input disabled" type="number" value="{{ question_for_editting.question_order }}" readonly>
-            </div>
-        </div>
-        <div class="is-fullwidth pt-4 is-flex is-justify-content-space-around is-flex-direction-row-reverse">
-            <div class="control">
-                <input type="submit" value="Save changes" class="button is-link">
-            </div>
-            <div class="control">
-                <a class="button is-warning is-light" href="{{ url_for("questions_page") }}/{{ question_for_editting.category_order }}" hx-boost="true">Return</a>
-            </div>
-        </div>
-    </form>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}

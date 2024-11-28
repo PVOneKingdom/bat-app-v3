@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 from app.exception.service import EndpointDataMismatch, Unauthorized
-from app.model.question import Question, QuestionCategory, QuestionCategoryRename, QuestionCategoryReorder
+from app.model.question import Question, QuestionCategory, QuestionCategoryRename, QuestionCategoryReorder, QuestionEditContent
 from app.model.user import User
 
 
@@ -72,12 +72,14 @@ def get_all_categories(current_user: User) -> list[QuestionCategory]:
 
     return data.get_all_categories()
 
+
 def get_all_questions_for_category(category_id: int, current_user: User) -> list[Question]:
     
     if not current_user.can_manage_questions():
         raise Unauthorized(msg="You cannot manage questions.")
 
     return data.get_all_questions_for_category(category_id=category_id)
+
 
 def get_questions_category(category_id: int, current_user: User) -> QuestionCategory:
 
@@ -96,6 +98,7 @@ def rename_questions_category(category_id_from_path: int, category_rename: Quest
 
     return data.rename_questions_category(category_rename=category_rename)
 
+
 def reorder_questions_category(questions_category_reorder: QuestionCategoryReorder, current_user: User) -> bool:
 
     if not current_user.can_manage_questions():
@@ -103,8 +106,23 @@ def reorder_questions_category(questions_category_reorder: QuestionCategoryReord
 
     for category_reorder_item in questions_category_reorder.reorder_data:
         updated = data.reorder_questions_category(category_reorder_item)
+        # NotImplemented - should check if all of them returns True 
 
     return True
 
 
+def get_one(question_id: int, current_user: User) -> Question:
 
+    if not current_user.can_manage_questions():
+        raise Unauthorized(msg="You cannot manage questions.")
+
+    return data.get_one(question_id=question_id)
+
+
+
+def update_question_content(question_edit_content: QuestionEditContent, current_user: User) -> Question:
+
+    if not current_user.can_manage_questions():
+        raise Unauthorized(msg="You cannot manage questions.")
+
+    return data.update_question_content(question_edit_content=question_edit_content)
