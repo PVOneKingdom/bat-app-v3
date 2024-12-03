@@ -42,6 +42,7 @@ curs.execute("""create table if not exists assessments_answers(
     answer_description text
     )""")
 
+
 # -------------------------------
 #   CRUDs
 # -------------------------------
@@ -81,6 +82,8 @@ def create_assessment(assessment_new: AssessmentNew) -> Assessment:
 
     try:
         cursor.execute(qry, params)
+        conn.commit()
+        return get_one(assessment_id=params["assessment_id"])
     finally:
         cursor.close()
 
@@ -158,7 +161,7 @@ def get_one(assessment_id: str) -> Assessment:
         a.owner_id,
         u1.username as owner_name,
         a.last_editor,
-        u2.username as last_editor_name,   
+        u2.username as last_editor_name,
         a.last_edit
     FROM
         assessments a
