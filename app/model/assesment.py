@@ -9,8 +9,12 @@ class Assessment(BaseModel):
     last_editor_name: str | None
 
 
+class AssessmentPost(BaseModel):
+    assessment_name: str
+    owner_id: str
+
 class AssessmentNew(BaseModel):
-    assessment_id: str | None
+    assessment_id: str
     assessment_name: str
     owner_id: str
 

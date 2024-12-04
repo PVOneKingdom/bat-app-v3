@@ -8,9 +8,9 @@ from app.model.question import Question, QuestionCategory
 curs.execute("""create table if not exists assessments(
     assessment_id text primary key,
     assessment_name text,
-    owner_id text references user( user_id ),
+    owner_id text references users( user_id ),
     last_edit text,
-    last_editor text references user( user_id )
+    last_editor text references users( user_id )
     )""")
 
 
@@ -69,7 +69,7 @@ def assessment_row_to_model(row: tuple) -> Assessment:
 def create_assessment(assessment_new: AssessmentNew) -> Assessment:
 
     # Create new assessment entry
-    qry = """insert into assessments(assessment_id, assessment_name, onwer_id)
+    qry = """insert into assessments(assessment_id, assessment_name, owner_id)
     values(:assessment_id, :assessment_name, :owner_id)"""
 
     params = {

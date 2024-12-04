@@ -1,10 +1,14 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 
+from app.model.assesment import AssessmentPost
 from app.template.init import jinja
 from app.model.user import User
 from app.service.auth import user_htmx_dep
+
+import app.service.user as user_service
 import app.service.assessment as service
+from app.web import prepare_notification
 
 
 router = APIRouter()
@@ -36,13 +40,19 @@ def get_assessments(request:Request, current_user: User = Depends(user_htmx_dep)
 
 
 @router.get("/create", response_class=HTMLResponse, name="dashboard_assessment_create_page")
-def get_assessment_create(request=Request, current_user: User = Depends(user_htmx_dep)):
+def get_assessment_create(request: Request, current_user: User = Depends(user_htmx_dep)):
 
+    try:
+        users: list[User] = user_service.get_all(current_user=current_user)
+    except:
+        # NotImplemented
+        raise
 
     context = {
             "request": request,
             "title":"Create Assessment",
             "description":"Create new assessment.",
+            "users": users,
             "current_user": current_user,
             }
 
@@ -56,26 +66,28 @@ def get_assessment_create(request=Request, current_user: User = Depends(user_htm
 
 
 @router.post("/create", response_class=HTMLResponse)
-def post_assessment_create(request=Request, current_user: User = Depends(user_htmx_dep)):
+def post_assessment_create(assessment_new: AssessmentPost, request: Request, current_user: User = Depends(user_htmx_dep)):
+
+    context = {
+            "request": request,
+            "title":"Create Assessment",
+            "description":"Create new assessment.",
+            "current_user": current_user,
+            }
 
     try:
-        assessments = service.get_all(current_user=current_user)
+        service.create_assessment(assessment_post=assessment_new, current_user=current_user)
+        users: list[User] = user_service.get_all(current_user=current_user)
+        context.update(prepare_notification(True, "success", f"Assessment {assessment_new.assessment_name} successfully created."))
+        context["users"] = users
     except:
         # NotImplemented
         raise
 
 
-    context = {
-            "request": request,
-            "title":"Assessments",
-            "description":"List of all available assessments.",
-            "current_user": current_user,
-            #"assessments": assessments,
-            }
-
 
     response = jinja.TemplateResponse(
-            name="dashboard/assessments.html",
+            name="dashboard/assessments-create.html",
             context=context
             )
 

@@ -2,7 +2,7 @@
 
 {% extends "dashboard/dashboard.html" %}
 {% block body %}
-<section class="bat-main-content is-flex pt-6">
+<div class="container is-max-tablet">
     <h2 class="title is-2 has-text-centered">{{ title }}</h2>
     {% include "helpers/notification.html" %}
     <form class="main-form"
@@ -18,7 +18,7 @@
         <div class="field">
             <label class="label">Owner</label>
             <div class="select is-fullwidth">
-                <select name="role">
+                <select name="owner_id">
                     {% for user in users %}
                     <option value="{{ user.user_id }}">{{ user.username }}</option>
                     {% endfor %}
@@ -34,5 +34,5 @@
             </div>
         </div>
     </form>
-</section>
+</div>
 {% endblock %}
