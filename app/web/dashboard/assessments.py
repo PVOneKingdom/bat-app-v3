@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.get("", response_class=HTMLResponse, name="dashboard_assessments_page")
-def get_assessments(request=Request, current_user: User = Depends(user_htmx_dep)):
+def get_assessments(request:Request, current_user: User = Depends(user_htmx_dep)):
 
     try:
         assessments = service.get_all(current_user=current_user)
@@ -19,17 +19,13 @@ def get_assessments(request=Request, current_user: User = Depends(user_htmx_dep)
         # NotImplemented
         raise
 
-    return ""
-    # some issue here
-
     context = {
             "request": request,
             "title":"Assessments",
             "description":"List of all available assessments.",
             "current_user": current_user,
-            #"assessments": assessments,
+            "assessments": assessments,
             }
-
 
     response = jinja.TemplateResponse(
             name="dashboard/assessments.html",
@@ -39,8 +35,28 @@ def get_assessments(request=Request, current_user: User = Depends(user_htmx_dep)
     return response
 
 
-@router.post("/create", response_class=HTMLResponse, name="dashboard_assessment_create_page")
-def post_assessments(request=Request, current_user: User = Depends(user_htmx_dep)):
+@router.get("/create", response_class=HTMLResponse, name="dashboard_assessment_create_page")
+def get_assessment_create(request=Request, current_user: User = Depends(user_htmx_dep)):
+
+
+    context = {
+            "request": request,
+            "title":"Create Assessment",
+            "description":"Create new assessment.",
+            "current_user": current_user,
+            }
+
+
+    response = jinja.TemplateResponse(
+            name="dashboard/assessments-create.html",
+            context=context
+            )
+
+    return response
+
+
+@router.post("/create", response_class=HTMLResponse)
+def post_assessment_create(request=Request, current_user: User = Depends(user_htmx_dep)):
 
     try:
         assessments = service.get_all(current_user=current_user)

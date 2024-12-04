@@ -1,18 +1,29 @@
-{% extends "dashboard/dashboard.html" %}
+{# This is the root page of the questions link. Other sublinks are derived from this page #}
 
+{% extends "dashboard/dashboard.html" %}
 {% block body %}
 <section class="bat-main-content is-flex pt-6">
     <div class="container">
         {% block body_content %}
-        <h2 class="title is-2 has-text-centered">Users</h2>
+        <h2 class="title is-2 has-text-centered">{{ title }}</h2>
         {% include "helpers/notification.html" %}
         <div class="is-flex is-justify-content-center">
-            <pre>
-            </pre>
+        {% if assessments %}
+        {% for assessment in assessments %}
+        <div class="card">
+            <h1 class="title is-1">{{ assessment.assessment_name }}</h1>
+            <h3 class="title is-3" data-owner_id="{{ assessment.owner_id }}">{{ assessment.owner_name }}</h3>
+        </div> 
+        {% endfor %}
+        {% else %}
+        <div class="content has-text-centered is-max-tablet">
+            <p>No assessments were created yet. Create one first!</p>
         </div>
-        <div class="content pt-5 is-flex is-justify-content-flex-end">
+        {% endif %}
+        </div>
+        <div class="content pt-5 is-flex is-justify-content-center">
             <a href="{{ url_for("dashboard_assessment_create_page") }}" hx-boost="true">
-                <button class="button is-link">Create New</button>
+                <button class="button is-link">Create Assessment</button>
             </a>
         </div>
     {% endblock %}

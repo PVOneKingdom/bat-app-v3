@@ -1,0 +1,38 @@
+{# This is the root page of the questions link. Other sublinks are derived from this page #}
+
+{% extends "dashboard/dashboard.html" %}
+{% block body %}
+<section class="bat-main-content is-flex pt-6">
+    <h2 class="title is-2 has-text-centered">{{ title }}</h2>
+    {% include "helpers/notification.html" %}
+    <form class="main-form"
+        hx-post="{{ request.url }}"
+        hx-ext="json-enc"
+        hx-target="body">
+        <div class="field">
+            <label class="label">Assessment Name</label>
+            <div class="control">
+                <input name="assessment_name" class="input selected-input" type="text">
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Owner</label>
+            <div class="select is-fullwidth">
+                <select name="role">
+                    {% for user in users %}
+                    <option value="{{ user.user_id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="is-fullwidth pt-4 is-flex is-justify-content-space-around is-flex-direction-row-reverse">
+            <div class="control">
+                <input type="submit" value="Create Assessment" class="button is-link">
+            </div>
+            <div class="control">
+                <a class="button is-warning" href="{{ url_for("dashboard_users_page") }}" hx-boost="true">Return</a>
+            </div>
+        </div>
+    </form>
+</section>
+{% endblock %}

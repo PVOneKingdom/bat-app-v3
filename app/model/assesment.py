@@ -10,7 +10,7 @@ class Assessment(BaseModel):
 
 
 class AssessmentNew(BaseModel):
-    assessment_id: str
+    assessment_id: str | None
     assessment_name: str
     owner_id: str
 

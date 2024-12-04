@@ -2,7 +2,7 @@
 
 {% block body %}
 <div class="container is-max-tablet">
-    <h2 class="title is-2 has-text-centered">Add User</h2>
+    <h2 class="title is-2 has-text-centered">{{ title }}</h2>
     {% include "helpers/notification.html" %}
     <form class="main-form" hx-post="{{ url_for("dashboard_user_add_page") }}" hx-ext="json-enc" hx-target="body">
         <div class="field">
