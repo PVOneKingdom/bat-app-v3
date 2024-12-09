@@ -21,14 +21,15 @@ class AssessmentNew(BaseModel):
 
 
 class AssessmentQuestion(BaseModel):
+    question_id: int
     assessment_id: str
     assessment_name: str
-    onwer_id: str
-    last_edit: str
-    last_editor: str
-    question_id: int
+    owner_id: str
+    last_edit: str | None
+    last_editor: str | None
     category_id: int
     category_name: str
+    category_order: int
 
 
 class AssessmentQuestionCategory(BaseModel):

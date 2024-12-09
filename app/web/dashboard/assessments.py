@@ -94,6 +94,12 @@ def post_assessment_create(assessment_new: AssessmentPost, request: Request, cur
     return response
 
 
+@router.get("/edit/{assessment_id}", response_class=HTMLResponse, name="dashboard_assessment_edit_page")
+def get_assessment_edit(assessment_id: str, request:Request, current_user: User = Depends(user_htmx_dep)):
+
+    return ""
+
+
 @router.get("/{assessment_id}", response_class=HTMLResponse, name="dashboard_assessment_page")
 def get_assessment(assessment_id: str, request:Request, current_user: User = Depends(user_htmx_dep)):
 

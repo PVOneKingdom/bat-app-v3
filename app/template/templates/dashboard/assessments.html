@@ -7,36 +7,49 @@
         {% block body_content %}
         <h2 class="title is-2 has-text-centered">{{ title }}</h2>
         {% include "helpers/notification.html" %}
-        <div class="grid">
-            {% if assessments %}
-            {% for assessment in assessments %}
-            <div class="cell">
-                <div class="card p-4 content">
-                    <h3 class="title is-3">{{ assessment.assessment_name }}</h3>
-                    <p data-owner_id="{{ assessment.owner_id }}"><b>Owner:</b> {{ assessment.owner_name }}</p>
-                    <a href="{{ url_for("dashboard_assessments_page") }}/{{ assessment.assessment_id }}"
-                        class="button is-link is-light"
-                        hx-boost="true">
-                        View
-                    </a>
-                    <button
-                        class="button is-danger is-light"
-                        hx-delete="{{ url_for("dashboard_assessments_page") }}/{{ assessment.assessment_id }}"
-                        hx-select=".bat-main-content"
-                        hx-target=".bat-main-content"
-                        hx-swap="outerHTML"
-                        hx-confirm="Delete assessment: {{ assessment.assessment_name }}?"
-                        >
-                        Delete
-                    </a>
-                </div> 
+        <div class="fixed-grid has-1-cols-mobile has-2-cols-tablet has-3-cols-desktop">
+            <div class="grid is-gap-4">
+                {% if assessments %}
+                {% for assessment in assessments %}
+                <div class="cell">
+                    <div class="card p-4 content">
+                        <h3 class="title is-3">{{ assessment.assessment_name }}</h3>
+                        <p data-owner_id="{{ assessment.owner_id }}"><b>Owner:</b> {{ assessment.owner_name }}</p>
+                        <div class="is-flex is-gap-2">
+                            <button
+                                class="button is-warning is-light"
+                                hx-delete="{{ url_for("dashboard_assessments_page") }}/edit/{{ assessment.assessment_id }}"
+                                hx-select=".bat-main-content"
+                                hx-target=".bat-main-content"
+                                hx-swap="outerHTML"
+                                >
+                                Edit
+                            </button>
+                            <a href="{{ url_for("dashboard_assessments_page") }}/{{ assessment.assessment_id }}"
+                                class="button is-link is-light"
+                                hx-boost="true">
+                                View
+                            </a>
+                            <button
+                                class="button is-danger is-light"
+                                hx-delete="{{ url_for("dashboard_assessments_page") }}/{{ assessment.assessment_id }}"
+                                hx-select=".bat-main-content"
+                                hx-target=".bat-main-content"
+                                hx-swap="outerHTML"
+                                hx-confirm="Delete assessment: {{ assessment.assessment_name }}? All Data will be deleted including answers!"
+                                >
+                                Delete
+                            </button>
+                        </div>
+                    </div> 
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="content has-text-centered is-max-tablet">
+                    <p>No assessments were created yet. Create one first!</p>
+                </div>
+                {% endif %}
             </div>
-            {% endfor %}
-            {% else %}
-            <div class="content has-text-centered is-max-tablet">
-                <p>No assessments were created yet. Create one first!</p>
-            </div>
-            {% endif %}
         </div>
         <div class="content pt-5 is-flex is-justify-content-center">
             <a href="{{ url_for("dashboard_assessment_create_page") }}" hx-boost="true">
