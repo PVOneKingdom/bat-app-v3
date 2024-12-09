@@ -1,0 +1,31 @@
+{# This is the root page of the questions link. Other sublinks are derived from this page #}
+
+{% extends "dashboard/dashboard.html" %}
+{% block body %}
+<section class="bat-main-content is-flex pt-6">
+    <div class="container">
+        {% block body_content %}
+        <h2 class="title is-2 has-text-centered">{{ title }}</h2>
+        <h4 class="title is-4 has-text-centered has-text-gray">{{ assessment.assessment_name }}</h4>
+        {% include "helpers/notification.html" %}
+        <div class="columns">
+            <div class="column">
+                <div class="is-flex is-justify-content-center">
+                    <div class="card p-4">
+                        <p><b>ID:</b> {{ assessment.assessment_id }}</p>
+                        <p data-owner_id="{{ assessment.owner_id }}"><b>Owner:</b> {{ assessment.owner_name }}</p>
+                        <p><b>Last Editor:</b> {{ assessment.last_editor_name }}</p>
+                        <p><b>Last Edit:</b> {{ assessment.last_edit }}</p>
+                    </div> 
+                </div>
+            </div>
+        </div>
+        <div class="content pt-5 is-flex is-justify-content-center">
+            <a href="{{ url_for("dashboard_assessments_page") }}" hx-boost="true">
+                <button class="button is-warning is-light">Retrun</button>
+            </a>
+        </div>
+        {% endblock %}
+    </div>
+</section>
+{% endblock %}

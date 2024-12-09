@@ -31,6 +31,15 @@ def get_assessment(assessment_id: str, current_user: User) -> Assessment:
     return assessment
 
 
+def delete_assessment(assessment_id: str, current_user: User) -> Assessment:
+
+    assessment = data.delete_assessment(assessment_id=assessment_id)
+    
+    if not current_user.can_manage_assessments():
+        raise Unauthorized(msg="You cannot access this assessment.")
+
+    return assessment
+
 def get_all(current_user: User) -> list[Assessment]:
 
     if not current_user.can_manage_assessments():

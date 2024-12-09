@@ -220,3 +220,28 @@ def get_all() -> list[Assessment]:
             return []
     finally:
         cursor.close()
+
+
+def delete_assessment(assessment_id: str) -> Assessment:
+
+    assessment = get_one(assessment_id=assessment_id)
+
+    qry_q = """delete from assessments_questions where assessment_id = :assessment_id"""
+    params_q = {"assessment_id": assessment_id}
+
+    qry_qc = """delete from assessments_questions_categories where assessment_id = :assessment_id"""
+    params_qc = {"assessment_id": assessment_id}
+
+    qry = """delete from assessments where assessment_id = :assessment_id"""
+    params = {"assessment_id": assessment_id}
+
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(qry_q, params_q)
+        cursor.execute(qry_qc, params_qc)
+        cursor.execute(qry, params)
+        conn.commit()
+        return assessment
+    finally:
+        cursor.close()

@@ -79,7 +79,7 @@ def post_assessment_create(assessment_new: AssessmentPost, request: Request, cur
         service.create_assessment(assessment_post=assessment_new, current_user=current_user)
         users: list[User] = user_service.get_all(current_user=current_user)
         context.update(prepare_notification(True, "success", f"Assessment {assessment_new.assessment_name} successfully created."))
-        context["users"] = users
+        context["users"] = user_service.get_all(current_user=current_user)
     except:
         # NotImplemented
         raise
@@ -88,6 +88,60 @@ def post_assessment_create(assessment_new: AssessmentPost, request: Request, cur
 
     response = jinja.TemplateResponse(
             name="dashboard/assessments-create.html",
+            context=context
+            )
+
+    return response
+
+
+@router.get("/{assessment_id}", response_class=HTMLResponse, name="dashboard_assessment_page")
+def get_assessment(assessment_id: str, request:Request, current_user: User = Depends(user_htmx_dep)):
+
+    try:
+        assessment = service.get_assessment(assessment_id=assessment_id, current_user=current_user)
+    except:
+        # NotImplemented
+        raise
+
+    context = {
+            "request": request,
+            "title":"Assessment",
+            "description":"Assessment detail page.",
+            "current_user": current_user,
+            "assessment": assessment,
+            }
+
+    response = jinja.TemplateResponse(
+            name="dashboard/assessment-view.html",
+            context=context
+            )
+
+    return response
+
+
+@router.delete("/{assessment_id}", response_class=HTMLResponse)
+def delete_assessment(assessment_id: str, request:Request, current_user: User = Depends(user_htmx_dep)):
+
+    try:
+        deleted_assessment = service.delete_assessment(assessment_id=assessment_id, current_user=current_user)
+        assessments = service.get_all(current_user=current_user)
+    except:
+        # NotImplemented
+        raise
+
+    context = {
+            "request": request,
+            "title":"Assessment",
+            "description":"Assessment detail page.",
+            "current_user": current_user,
+            "assessment": delete_assessment,
+            "assessments": assessments
+            }
+
+    context.update(prepare_notification(True, "success", f"Assessment {deleted_assessment.assessment_name} removed!"))
+
+    response = jinja.TemplateResponse(
+            name="dashboard/assessments.html",
             context=context
             )
 
