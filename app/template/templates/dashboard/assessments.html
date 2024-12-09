@@ -7,7 +7,7 @@
         {% block body_content %}
         <h2 class="title is-2 has-text-centered">{{ title }}</h2>
         {% include "helpers/notification.html" %}
-        <div class="grid is-gap-4">
+        <div class="grid">
             {% if assessments %}
             {% for assessment in assessments %}
             <div class="cell">
