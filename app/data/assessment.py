@@ -356,7 +356,10 @@ def get_assessment_qa(assessment_id: str) -> list[AssessmentQA]:
         on q.question_id = aw.question_id
         and q.assessment_id = aw.assessment_id
     where
-        q.assessment_id = :assessment_id"""
+        q.assessment_id = :assessment_id
+    order by
+        qc.category_order asc,
+        q.question_order asc"""
 
     params = {"assessment_id":assessment_id}
 

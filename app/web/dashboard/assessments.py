@@ -107,22 +107,10 @@ def get_assessment_edit(assessment_id: str, request:Request, current_user: User 
     try:
         assessment_qa: list[AssessmentQA] = service.get_all_qa(assessment_id=assessment_id, current_user=current_user)
         context["assessment_qa"] = assessment_qa
+        context["wheel"] = service.render_wheel(assessment_qa=assessment_qa)
     except:
         # NotImplemented
         raise
-
-    for qa in assessment_qa:
-        print()
-        print(f"Category Order: {qa.category_order}")
-        print(f"Category Name: {qa.category_name}")
-        print(f"Quesion Order: {qa.question_id}")
-        print(f"Quesion: {qa.question}")
-        print()
-
-    print("\n\n\n")
-    lenght = len(assessment_qa)
-    print(f"len: {lenght}")
-
 
     response = jinja.TemplateResponse(
             name="dashboard/assessments-edit.html",

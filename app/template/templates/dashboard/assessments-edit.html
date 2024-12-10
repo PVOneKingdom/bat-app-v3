@@ -5,17 +5,9 @@
 <div class="container is-max-tablet">
     <h2 class="title is-2 has-text-centered">{{ title }}</h2>
     {% include "helpers/notification.html" %}
-    <pre>
-    {% for qa in assessment_qa %}    
-        assessment_id: {{ qa.assessment_id }}
-        question_id: {{ qa.question_id }}
-        answer_id: {{qa.answer_id }}
-    {% endfor %}
-    </pre>
+    {{ wheel | safe }}
 </div>
 {% endblock %}
+
 {% block footer_scripts %}
-<script>
-    document.querySelector(".selected-input").focus()
-</script>
 {% endblock %}
