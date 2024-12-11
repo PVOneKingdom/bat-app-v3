@@ -121,9 +121,7 @@ def get_assessment_edit(assessment_id: str, request:Request, current_user: User 
 
 
 @router.get("/edit/{assessment_id}/{category_order}/{question_order}", response_class=HTMLResponse, name="dashboard_assessment_answer_question_page")
-def get_asnwer_question_page(assessment_id: str, category_order: int, question_order: int,  request:Request, current_user: User = Depends(user_htmx_dep)):
-
-    print("handled by this")
+def get_answer_question_page(assessment_id: str, category_order: int, question_order: int,  request:Request, current_user: User = Depends(user_htmx_dep)):
 
     context = {
             "request": request,
@@ -134,11 +132,17 @@ def get_asnwer_question_page(assessment_id: str, category_order: int, question_o
 
     try:
         assessment_qa: list[AssessmentQA] = service.get_all_qa(assessment_id=assessment_id, current_user=current_user)
-        current_question: AssessmentQA = service.get_current_assessment_question(assessment_qa=assessment_qa, category_order=category_order, question_order=question_order)
+        current_question: AssessmentQA = service.get_assessment_qa(assessment_qa=assessment_qa, category_order=category_order, question_order=question_order)
+        previous_question, next_question = service.get_neighbouring_questions(assessment_qa=assessment_qa, category_order=category_order, question_order=question_order)
+
+        print(previous_question)
+        print(next_question)
 
         context["assessment_qa"] = assessment_qa
         context["current_question"] = current_question
         context["wheel"] = service.prepare_wheel_context(assessment_qa=assessment_qa)
+        context["previous_question"] = previous_question
+        context["next_question"] = next_question
     except:
         # NotImplemented
         raise
@@ -149,6 +153,43 @@ def get_asnwer_question_page(assessment_id: str, category_order: int, question_o
             )
 
     return response
+
+
+@router.post("/edit/{assessment_id}/{category_order}/{question_order}", response_class=HTMLResponse)
+def post_answer_question_page(data: dict, assessment_id: str, category_order: int, question_order: int,  request:Request, current_user: User = Depends(user_htmx_dep)):
+    print(data)
+
+    context = {
+            "request": request,
+            "title":"Assessment Details",
+            "description":"Assessment detail",
+            "current_user": current_user,
+            }
+
+    try:
+        assessment_qa: list[AssessmentQA] = service.get_all_qa(assessment_id=assessment_id, current_user=current_user)
+        current_question: AssessmentQA = service.get_assessment_qa(assessment_qa=assessment_qa, category_order=category_order, question_order=question_order)
+        previous_question, next_question = service.get_neighbouring_questions(assessment_qa=assessment_qa, category_order=category_order, question_order=question_order)
+
+        print(previous_question)
+        print(next_question)
+
+        context["assessment_qa"] = assessment_qa
+        context["current_question"] = current_question
+        context["wheel"] = service.prepare_wheel_context(assessment_qa=assessment_qa)
+        context["previous_question"] = previous_question
+        context["next_question"] = next_question
+    except:
+        # NotImplemented
+        raise
+
+    response = jinja.TemplateResponse(
+            name="dashboard/assessments-answer-question.html",
+            context=context
+            )
+
+    return response
+
 
 @router.get("/{assessment_id}", response_class=HTMLResponse, name="dashboard_assessment_page")
 def get_assessment(assessment_id: str, request:Request, current_user: User = Depends(user_htmx_dep)):

@@ -92,15 +92,43 @@ def prepare_wheel_context(assessment_qa: list[AssessmentQA]) -> dict:
     return context
 
 
-def get_current_assessment_question(assessment_qa: list[AssessmentQA], category_order: int, question_order: int) -> AssessmentQA:
+def get_assessment_qa(assessment_qa: list[AssessmentQA], category_order: int, question_order: int) -> AssessmentQA:
 
     for qa in assessment_qa:
-        print(f"Current Question Category order: {qa.category_order}")
-        print(f"Current Question Question order: {qa.question_order}")
         if qa.category_order == category_order and qa.question_order == question_order:
             return qa
 
     raise RecordNotFound(msg=f"Unable to find Assessment Q&A with cateogory order: {category_order} and question_order: {question_order}")
+
+def get_neighbouring_questions(assessment_qa: list[AssessmentQA], category_order: int, question_order: int):
+
+    orders: list = []
+    for i in range(0, 12):
+        for y in range(1, 4):
+            orders.append((i,y))
+
+    previous_question = None
+    next_question = None
+
+    current_index = orders.index((category_order, question_order))
+    if current_index == 0:
+        previous_question = None
+        next_question = get_assessment_qa(assessment_qa=assessment_qa, category_order=orders[current_index + 1][0], question_order=orders[current_index + 1][1])
+    elif current_index == len(orders) - 1:
+        previous_question = get_assessment_qa(assessment_qa=assessment_qa, category_order=orders[current_index - 1][0], question_order=orders[current_index - 1][1])
+        next_question = None
+    else:
+        previous_question = get_assessment_qa(assessment_qa=assessment_qa, category_order=orders[current_index - 1][0], question_order=orders[current_index - 1][1])
+        next_question = get_assessment_qa(assessment_qa=assessment_qa, category_order=orders[current_index + 1][0], question_order=orders[current_index + 1][1])
+
+    return (previous_question, next_question)
+
+    
+
+    
+
+
+
 
 def save_answer():
 

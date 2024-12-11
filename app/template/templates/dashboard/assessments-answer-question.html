@@ -3,53 +3,65 @@
 {% block assessment_question_panel %}
 <div class="content pt-4">
     <h4 class="title is-4 has-text-centered">{{ current_question.category_name }}</h4>
-    <form class="main-form" hx-post="{{ url_for("dashboard_user_add_page") }}" hx-ext="json-enc" hx-target="body">
+    <form class="main-form"
+        hx-post="{{ request.url }}"
+        hx-ext="json-enc"
+        hx-trigger="change"
+        hx-select=".bat-main-content"
+        hx-target=".bat-main-content"
+        hx-swap="outerHTML"
+        >
         <div id="answer-value-wrapper" class="control">
             <label class="label">{{ current_question.question }}</label>
             <div class="pb-2">
                 <label class="radio p-2 is-fullwidth">
-                    <input type="radio" name="answer_value" value="yes"/>
+                    <input type="radio" name="answer_option" value="yes"/>
                     {{ current_question.option_yes }}   
                 </label>
             </div>
             <div class="pb-2">
                 <label class="radio p-2 is-fullwidth">
-                    <input type="radio" name="answer_value" value="mid"/>
+                    <input type="radio" name="answer_option" value="mid"/>
                     {{ current_question.option_mid }}   
                 </label>
             </div>
             <div class="pb-2">
                 <label class="radio p-2 is-fullwidth">
-                    <input type="radio" name="answer_value" value="no"/>
+                    <input type="radio" name="answer_option" value="no"/>
                     {{ current_question.option_no }}   
                 </label>
             </div>
-            <div id="clear-answer-button" class="button is-link is-light mt-3">
+            <div id="clear-answer-button" class="button is-link is-light mt-3" onclick="assessmentUI.clearAnswers()">
                 Clear answer
             </div>
         </div>
         <div class="p-3"></div>
-        <div class="field">
-            <label class="label">Username</label>
-            <div class="control">
-                <input name="username" class="input" type="text" placeholder="JohnDoe">
+        <p>{{ current_question.question_description }}</p>
+        <textarea class="textarea" name="answer_description" placeholder="Place to expend your answer or share comment with us..."></textarea>
+        <div class="is-flex is-justify-content-space-around py-4">
+            {% if previous_question %}
+            <div class="button is-link is-light"
+                hx-get="{{ url_for("dashboard_assessments_page") }}/edit/{{ previous_question.assessment_id }}/{{ previous_question.category_order }}/{{ previous_question.question_order }}"
+                hx-select=".bat-main-content"
+                hx-target=".bat-main-content"
+                hx-swap="outerHTML">
+            Previous
             </div>
-        </div>
-        <div class="field">
-            <label class="label">Password</label>
-            <div class="control">
-                <input name="password" class="input" type="password" placeholder="******">
+            {% endif %}
+            {% if next_question %}
+            <div class="button is-link is-light"
+                hx-get="{{ url_for("dashboard_assessments_page") }}/edit/{{ next_question.assessment_id }}/{{ next_question.category_order }}/{{ next_question.question_order }}"
+                hx-select=".bat-main-content"
+                hx-target=".bat-main-content"
+                hx-swap="outerHTML">
+            Next
             </div>
-        </div>
-        <div class="is-fullwidth pt-4 is-flex is-justify-content-space-around is-flex-direction-row-reverse">
-            <div class="control">
-                <input type="submit" value="Create User" class="button is-link">
-            </div>
+            {% endif %}
         </div>
     </form>
 </div>
 {% endblock %}
 
 {% block footer_scripts %}
-<script src="{{ url_for("js", path="assessment-clear-answer.js") }}"></script>
+<script src="{{ url_for("js", path="assessment-ui.js") }}"></script>
 {% endblock %}
