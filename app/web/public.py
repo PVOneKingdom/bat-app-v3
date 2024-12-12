@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from app.exception.database import RecordNotFound
-from app.exception.service import IncorectCredentials
-from app.model.user import UserLogin
+from app.exception.service import IncorectCredentials, InvalidBearerToken
+from app.model.user import User, UserLogin
 from app.template.init import jinja
-from app.service.auth import handle_token_creation, auth_user
-
+from app.service.auth import handle_token_creation, auth_user, get_current_user
 
 router = APIRouter()
 
@@ -26,6 +25,49 @@ def homepage_get(request: Request):
             )
 
     return response
+
+
+@router.get("/logout", response_class=HTMLResponse, name="logout_page")
+def logout_page_get(request: Request):
+
+    context: dict = {
+            "request": request,
+            "title": "Logout",
+            "description": "Logout from your current session.",
+            }
+
+
+    response = jinja.TemplateResponse(
+            name="public/logout.html",
+            context=context,
+            )
+
+    return response
+
+
+@router.get("/token-check", name="token_check_endpoint")
+def token_check_get(request: Request):
+
+    token = request.headers.get("Authorization")
+    data: dict = {}
+
+    if not token:
+        return HTTPException(status_code=401, detail="No access token appended")
+
+    try:
+        current_user: User = get_current_user(token.split(" ")[1]) # pyright: ignore
+    except InvalidBearerToken as e:
+        raise HTTPException(status_code=401, detail=e.msg)
+    except RecordNotFound as e:
+        raise HTTPException(status_code=401, detail=e.msg)
+
+    user_role = current_user.role.value
+    if user_role == "user":
+        redirect_to = request.url_for("app_assessments_page")
+    if user_role == "coach" or user_role == "admin":
+        redirect_to = request.url_for("dashboard_assessments_page")
+
+    return {"redirect_to":f"{redirect_to}"}
 
  
 @router.get("/login", response_class=HTMLResponse, name="login_page")

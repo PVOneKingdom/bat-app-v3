@@ -12,5 +12,8 @@
         <a href="{{ url_for("dashboard_users_page") }}" class="navbar-item {% if request.url == url_for("dashboard_users_page") %} has-text-weight-bold {% endif %}">
             Users
         </a>
+        <a href="{{ url_for("logout_page") }}" class="ml-4 navbar-item {% if request.url == url_for("logout_page") %} has-text-weight-bold {% endif %}">
+            Log out
+        </a>
     </div>
 </div>

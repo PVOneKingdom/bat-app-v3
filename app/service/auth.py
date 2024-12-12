@@ -91,7 +91,7 @@ def get_current_user(token: str) -> User | None:
     """Dependecy that extracts data from token and returns User object"""
 
     if not (user_id := jwt_to_user_id(token)):
-        raise InvalidBearerToken("Invalid Bearer Token")
+        raise InvalidBearerToken(msg="Invalid Bearer Token")
     if (user := get_user_by_user_id(user_id=user_id)):
         return user
 

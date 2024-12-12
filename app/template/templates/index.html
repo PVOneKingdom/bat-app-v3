@@ -11,6 +11,7 @@
         <script src="{{ url_for("js", path="htmx.min.js") }}"></script>
         <script src="{{ url_for("js", path="json-enc.js") }}"></script>
         <script src="{{ url_for("js", path="htmx-process-errors.js") }}"></script>
+        {% include "helpers/token-check-url.html" %}
         {% block header_scripts %}
         {% endblock %}
 

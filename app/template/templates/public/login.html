@@ -53,3 +53,7 @@
     </div>
 </section>
 {% endblock %}
+
+{% block footer_scripts %}
+<script src="{{ url_for("js", path="token-check.js") }}"></script>
+{% endblock %}

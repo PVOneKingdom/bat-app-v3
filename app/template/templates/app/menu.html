@@ -3,5 +3,8 @@
         <a href="{{ url_for("app_assessments_page") }}" class="navbar-item {% if request.url == url_for("app_assessments_page") %} has-text-weight-bold {% endif %}">
             Assessments
         </a>
+        <a href="{{ url_for("logout_page") }}" class="ml-4 navbar-item {% if request.url == url_for("logout_page") %} has-text-weight-bold {% endif %}">
+            Log out
+        </a>
     </div>
 </div>

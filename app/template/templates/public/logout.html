@@ -1,0 +1,36 @@
+{% extends "index.html" %}
+
+{# HEADER PART #}
+{% block title %}{{ title }}{% endblock %}
+{% block description %}{{ description }}{% endblock %}
+
+
+{# CONTENT #}
+{% block body %}
+<section class="bat-main-content is-flex is-align-items-center">
+    <div class="container">
+        <div class="columns is-flex is-justify-content-center">
+            <div class="column is-one-third content">
+                <div class="content has-text-centered">
+                    <div class="is-flex is-justify-content-center">
+                        <img width="100" src="{{ url_for("images", path="bat-logo-transparent.png") }}" alt="OK BAT Logo">
+                    </div>
+                    <h1 class="is-title is-1 has-text-centered">Logged out</h1>
+                    <p>You've been successfully logged out.</p>
+                    <button class="button is-link is-light px-5"
+                        hx-get="{{ url_for("homepage") }}"
+                        hx-swap="outerHTML"
+                        hx-select=".bat-body"
+                        hx-target=".bat-body"
+                        hx-push-url="true"
+                        >Home</button>
+                </div>
+            </div>       
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block footer_scripts %}
+<script src="{{ url_for("js", path="htmx-remove-token.js") }}"></script>
+{% endblock %}
