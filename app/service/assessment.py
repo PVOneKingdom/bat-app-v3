@@ -61,11 +61,6 @@ def get_all_qa(assessment_id: str, current_user: User) -> list[AssessmentQA]:
 
     assessment = data.get_one(assessment_id=assessment_id)
 
-    print()
-    print(f"current_id: {current_user.user_id}")
-    print(f"assessment_owner_id: {assessment.owner_id}")
-    print()
-
     if not current_user.can_manage_assessments() and current_user.user_id != assessment.owner_id:
         raise Unauthorized(msg="You cannot access this assessment data.")
 
