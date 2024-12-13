@@ -1,5 +1,4 @@
 {# This is the root page of the questions link. Other sublinks are derived from this page #}
-
 {% extends "app/app.html" %}
 {% block body %}
 <section class="bat-main-content is-flex pt-6">
@@ -40,9 +39,9 @@
                 </div> 
                 {% endblock %}
             </div>
-
         </div>
         {% endblock %}
     </div>
+    <script src="{{ url_for("js", path="wheel-labels.js") }}"></script>
 </section>
 {% endblock %}

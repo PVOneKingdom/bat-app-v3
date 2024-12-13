@@ -26,8 +26,6 @@ data-assessment_id="{{ wheel.assessment_id }}">
         hx-target=".bat-main-content"
         hx-select=".bat-main-content"
         hx-swap="outerHTML"
-        onmouseover="console.log(this)"
-        onmouseout="console.log(this)"
         />
     </g>
     <g class="category category-01 {% if current_question and current_question.category_order == 1 %}active{% endif %}" data-category_name="{{ wheel.category_name_01 }}">
