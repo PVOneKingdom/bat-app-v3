@@ -98,3 +98,8 @@ class User(BaseModel):
         if self.role == UserRoleEnum.admin or self.role == UserRoleEnum.coach:
             return True
         return False
+
+    def can_manage_notes(self) -> bool:
+        if self.role == UserRoleEnum.admin or self.role == UserRoleEnum.coach:
+            return True
+        return False
