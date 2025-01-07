@@ -105,7 +105,7 @@ def get_note_by_id(note_id: int) -> AssessmentNote:
         assessment_id,
         category_order,
         note_content
-    form
+    from
         assessments_notes
     where
         note_id = :note_id
@@ -114,6 +114,8 @@ def get_note_by_id(note_id: int) -> AssessmentNote:
     params = {
             "note_id": note_id
             }
+
+    print(params)
 
     cursor = conn.cursor()
 
@@ -131,7 +133,7 @@ def update_note(note_id: int, note_content: str) -> AssessmentNote:
 
     qry = """
     update
-        note
+        assessments_notes
     set
         note_content = :note_content
     where

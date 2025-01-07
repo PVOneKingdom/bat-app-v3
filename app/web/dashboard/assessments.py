@@ -277,6 +277,11 @@ def put_answer_question_category_review_page(request:Request, assessment_id: str
             }
 
     try:
+        note_service.update_note(assessment_note=assessment_note, current_user=current_user)
+    except:
+        raise
+
+    try:
         assessment_qa: list[AssessmentQA] = service.get_all_qa(
                 assessment_id=assessment_id,
                 current_user=current_user)

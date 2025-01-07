@@ -21,9 +21,9 @@ def get_note_by_id(note_id: int, current_user: User) -> AssessmentNote:
     return data.get_note_by_id(note_id=note_id)
 
 
-def update_note(note_id: int, note_content: str, current_user: User) -> AssessmentNote:
+def update_note(assessment_note: AssessmentNote, current_user: User) -> AssessmentNote:
 
     if not current_user.can_manage_notes():
         raise Unauthorized(msg="You cannot manage notes.")
 
-    return data.update_note(note_id=note_id, note_content=note_content)
+    return data.update_note(note_id=assessment_note.note_id, note_content=assessment_note.note_content)
