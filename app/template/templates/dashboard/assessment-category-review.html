@@ -47,7 +47,7 @@
                                 <b>Answer:</b>
                             </div>
                             <div class="list-item-description pl-5 mb-4">
-                                <div class="review-inline-cirlce {{ qa.answer_option }}"></div> {{ qa["option_" + qa.answer_option] }}
+                                <div class="review-inline-cirlce {{ qa.answer_option }}"></div>{% if qa.answer_option %}{{ qa["option_" + qa.answer_option] }}{% endif %}
                             </div>
                         </div>
                         <div class="list-item">

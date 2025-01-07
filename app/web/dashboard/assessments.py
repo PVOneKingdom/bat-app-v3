@@ -220,7 +220,7 @@ def get_answer_question_review_page(request:Request, assessment_id: str, current
     return response
 
 
-@router.get("/review/{assessment_id}/{category_order}", response_class=HTMLResponse)
+@router.get("/review/{assessment_id}/{category_order}", response_class=HTMLResponse, name="dashboard_assessment_category_review_page")
 def get_answer_question_category_review_page(assessment_id: str,
                                              category_order: int,
                                              request:Request,

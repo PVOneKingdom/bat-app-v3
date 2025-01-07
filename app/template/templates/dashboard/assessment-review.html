@@ -15,7 +15,13 @@
                 {% for qa in assessment_qa %}
                     {% if qa.category_name not in assessments_categories %}
                         {% set assessments_categories = assessments_categories.append(qa.category_name) %}
-                        <div class="card p-4 is-clickable">
+                        <div class="card p-4 is-clickable"
+                            hx-get="{{ url_for("dashboard_assessment_category_review_page", assessment_id=assessment_id, category_order=qa.category_order) }}"
+                            hx-select=".bat-main-content"
+                            hx-target=".bat-main-content"
+                            hx-swap="outerHTML"
+                            hx-push-url="true"
+                            >
                             <h5 class="title is-5">{{ qa.category_order + 1 }} {{ qa.category_name }}</h5>
                         </div>
                     {% endif %}

@@ -115,8 +115,6 @@ def get_note_by_id(note_id: int) -> AssessmentNote:
             "note_id": note_id
             }
 
-    print(params)
-
     cursor = conn.cursor()
 
     try:
