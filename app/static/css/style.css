@@ -67,3 +67,22 @@ input.disabled {
 .bat-interactive-circle {
     overflow: visible;
 }
+.review-inline-cirlce {
+    border-radius: 50%;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background-color: #0000cd;
+}
+
+.review-inline-cirlce.yes {
+    background-color: #00cd00;
+}
+
+.review-inline-cirlce.mid {
+    background-color: #cdcd00;
+}
+
+.review-inline-cirlce.no {
+    background-color: #cd0000;
+}

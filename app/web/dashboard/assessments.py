@@ -131,6 +131,7 @@ def get_answer_question_page(request:Request, assessment_id: str, category_order
             "title":"Assessment Details",
             "description":"Assessment detail",
             "current_user": current_user,
+            "assessment_id": assessment_id
             }
 
     try:
@@ -150,94 +151,6 @@ def get_answer_question_page(request:Request, assessment_id: str, category_order
 
     response = jinja.TemplateResponse(
             name="dashboard/assessment-answer-question.html",
-            context=context
-            )
-
-    return response
-
-
-@router.get("/review/{assessment_id}/", response_class=HTMLResponse, name="dashboard_assessment_review_page")
-def get_answer_question_review_page(request:Request, assessment_id: str, current_user: User = Depends(user_htmx_dep)):
-
-    context = {
-            "request": request,
-            "title":"View Assessment",
-            "description":"View assessment",
-            "current_user": current_user,
-            }
-
-    try:
-        assessment_qa: list[AssessmentQA] = service.get_all_qa(assessment_id=assessment_id, current_user=current_user)
-
-        context["assessment_qa"] = assessment_qa
-        context["title"] = f"{assessment_qa[0].assessment_name}"
-        context["wheel"] = service.prepare_wheel_context(assessment_qa=assessment_qa)
-    except:
-        # NotImplemented
-        raise
-
-    response = jinja.TemplateResponse(
-            name="dashboard/assessment-review.html",
-            context=context
-            )
-
-    return response
-
-
-@router.get("/review/{assessment_id}/{category_order}", response_class=HTMLResponse)
-def get_answer_question_category_review_page(assessment_id: str, category_order: int,  request:Request, current_user: User = Depends(user_htmx_dep)):
-
-    context = {
-            "request": request,
-            "title":"View Assessment",
-            "description":"View assessment",
-            "current_user": current_user,
-            "current_category_order": category_order
-            }
-
-    try:
-        assessment_qa: list[AssessmentQA] = service.get_all_qa(assessment_id=assessment_id, current_user=current_user)
-        assessment_category_qa: list[AssessmentQA] = service.filter_assessment_qa_by_category(assessment_qa=assessment_qa, category_order=category_order)
-
-        context["assessment_qa"] = assessment_qa
-        context["assessment_category_qa"] = assessment_category_qa
-        context["title"] = f"{assessment_qa[0].assessment_name}"
-        context["wheel"] = service.prepare_wheel_context(assessment_qa=assessment_qa)
-    except:
-        # NotImplemented
-        raise
-
-    response = jinja.TemplateResponse(
-            name="dashboard/assessment-category-review.html",
-            context=context
-            )
-
-    return response
-
-@router.put("/review/{assessment_id}/{category_order}", response_class=HTMLResponse)
-def put_answer_question_category_review_page(assessment_id: str, category_order: int,  request:Request, current_user: User = Depends(user_htmx_dep)):
-
-    context = {
-            "request": request,
-            "title":"View Assessment",
-            "description":"View assessment",
-            "current_user": current_user,
-            "current_category_order": category_order,
-            }
-
-
-    try:
-        assessment_qa: list[AssessmentQA] = service.get_all_qa(assessment_id=assessment_id, current_user=current_user)
-
-        context["assessment_qa"] = assessment_qa
-        context["title"] = f"{assessment_qa[0].assessment_name}"
-        context["wheel"] = service.prepare_wheel_context(assessment_qa=assessment_qa)
-    except:
-        # NotImplemented
-        raise
-
-    response = jinja.TemplateResponse(
-            name="dashboard/assessment-category-review.html",
             context=context
             )
 
@@ -276,6 +189,123 @@ def post_answer_question_page(answer_data: AssessmentAnswerPost, assessment_id: 
             )
 
     return response
+
+
+@router.get("/review/{assessment_id}/", response_class=HTMLResponse, name="dashboard_assessment_review_page")
+def get_answer_question_review_page(request:Request, assessment_id: str, current_user: User = Depends(user_htmx_dep)):
+
+    context = {
+            "request": request,
+            "title":"View Assessment",
+            "description":"View assessment",
+            "current_user": current_user,
+            "assessment_id": assessment_id
+            }
+
+    try:
+        assessment_qa: list[AssessmentQA] = service.get_all_qa(assessment_id=assessment_id, current_user=current_user)
+
+        context["assessment_qa"] = assessment_qa
+        context["title"] = f"{assessment_qa[0].assessment_name}"
+        context["wheel"] = service.prepare_wheel_context(assessment_qa=assessment_qa)
+    except:
+        # NotImplemented
+        raise
+
+    response = jinja.TemplateResponse(
+            name="dashboard/assessment-review.html",
+            context=context
+            )
+
+    return response
+
+
+@router.get("/review/{assessment_id}/{category_order}", response_class=HTMLResponse)
+def get_answer_question_category_review_page(assessment_id: str,
+                                             category_order: int,
+                                             request:Request,
+                                             current_user: User = Depends(user_htmx_dep)):
+
+    context = {
+            "request": request,
+            "title":"View Assessment",
+            "description":"View assessment",
+            "current_user": current_user,
+            "assessment_id": assessment_id,
+            "current_category_order": category_order
+            }
+
+    try:
+        assessment_qa: list[AssessmentQA] = service.get_all_qa(
+                assessment_id=assessment_id,
+                current_user=current_user)
+
+        assessment_category_qa: list[AssessmentQA] = service.filter_assessment_qa_by_category(
+                assessment_qa=assessment_qa,
+                category_order=category_order)
+
+        assessment_category_note: AssessmentNote = note_service.get_note(
+                assessment_id=assessment_id,
+                category_order=category_order,
+                current_user=current_user)
+
+        context["assessment_qa"] = assessment_qa
+        context["assessment_category_qa"] = assessment_category_qa
+        context["assessment_category_note"] = assessment_category_note
+        context["title"] = f"{assessment_qa[0].assessment_name}"
+    except:
+        # NotImplemented
+        raise
+
+    response = jinja.TemplateResponse(
+            name="dashboard/assessment-category-review.html",
+            context=context
+            )
+
+    return response
+
+@router.put("/review/{assessment_id}/{category_order}", response_class=HTMLResponse)
+def put_answer_question_category_review_page(request:Request, assessment_id: str, category_order: int, assessment_note: AssessmentNote, current_user: User = Depends(user_htmx_dep)):
+
+    context = {
+            "request": request,
+            "title":"View Assessment",
+            "description":"View assessment",
+            "current_user": current_user,
+            "assessment_id": assessment_id,
+            "current_category_order": category_order
+            }
+
+    try:
+        assessment_qa: list[AssessmentQA] = service.get_all_qa(
+                assessment_id=assessment_id,
+                current_user=current_user)
+
+        assessment_category_qa: list[AssessmentQA] = service.filter_assessment_qa_by_category(
+                assessment_qa=assessment_qa,
+                category_order=category_order)
+
+        assessment_category_note: AssessmentNote = note_service.get_note(
+                assessment_id=assessment_id,
+                category_order=category_order,
+                current_user=current_user)
+
+        context["assessment_qa"] = assessment_qa
+        context["assessment_category_qa"] = assessment_category_qa
+        context["assessment_category_note"] = assessment_category_note
+        context["title"] = f"{assessment_qa[0].assessment_name}"
+    except:
+        # NotImplemented
+        raise
+
+    response = jinja.TemplateResponse(
+            name="dashboard/assessment-category-review.html",
+            context=context
+            )
+
+    return response
+
+
 
 
 @router.get("/{assessment_id}", response_class=HTMLResponse, name="dashboard_assessment_page")

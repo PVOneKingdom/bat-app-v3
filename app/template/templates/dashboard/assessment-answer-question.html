@@ -50,7 +50,14 @@
             </div>
             <div class="pb-2 is-hidden">
                 <label class="radio p-2 is-fullwidth">
-                    <input id="clear-answer-option" type="radio" name="answer_option" value=""/>
+                    <input id="clear-answer-option" type="radio" name="answer_option" value=""
+                    {%
+                        if current_question.answer_option != "yes"
+                        and current_question.answer_option != "mid"
+                        and current_question.answer_option != "no" %}
+                        checked
+                    {% endif %}
+                    />
                     Clear
                 </label>
             </div>

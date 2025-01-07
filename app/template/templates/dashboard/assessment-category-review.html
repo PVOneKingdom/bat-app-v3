@@ -8,24 +8,73 @@
         <h2 class="title is-2 has-text-centered">{{ title }}</h2>
         <div class="columns">
             <div class="column">
-                <div class="button is-link is-light"
-                    hx-get="{{ url_for("dashboard_assessment_page") }}/{{ "
-                    hx-select=""
-                    hx-target=""
-                    hx-swap=""
+                <div class="button is-warning is-light"
+                    hx-get="{{ url_for("dashboard_assessment_review_page", assessment_id=assessment_id) }}"
+                    hx-select=".bat-main-content"
+                    hx-target=".bat-main-content"
+                    hx-swap="outerHTML"
                     hx-push-url="true"
                     >
-                    
+                    Return
                 </div>
             </div>
         </div>
         <div class="columns">
             <div class="column assessment-wheel-panel is-two-fifths">
-                {% include "wheel/wheel-review.svg" %}
+                <h5 class="title is-5">Notes:</h5>
+                <form
+                    hx-put="{{ request.url }}"
+                    hx-select=".bat-main-content"
+                    hx-target=".bat-main-content"
+                    hx-swap="outerHTML"
+                    hx-ext="json-enc">
+                    <textarea name="note_content" class="textarea" rows="16">{% if assessment_category_note.note_content %}{{ assessment_category_note.note_content }}{% endif %}</textarea>
+                    <div class="is-hidden">
+                        <input type="number" name="note_id" value="{{ assessment_category_note.note_id }}">
+                        <input type="text" name="assessment_id" value="{{ assessment_category_note.assessment_id }}">
+                        <input type="number" name="category_order" value="{{ assessment_category_note.category_order }}">
+                    </div>
+                    <button class="button is-link is-light my-3">Save note</button>
+                </form>
             </div>
             <div id="assessment-question-panel" class="column">
+            {% for qa in assessment_category_qa %}
+                <h6 class="title is-6 mb-2">{{ qa.question_order }}. {{ qa.question }}</h6>
+                <div class="pl-4 pb-4">
+                    <div class="list">
+                        <div class="list-item">
+                            <div class="list-item-title mb-2">
+                                <b>Answer:</b>
+                            </div>
+                            <div class="list-item-description pl-5 mb-4">
+                                <div class="review-inline-cirlce {{ qa.answer_option }}"></div> {{ qa["option_" + qa.answer_option] }}
+                            </div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-item-title mb-2">
+                                <b>{{ qa.question_description }}</b>
+                            </div>
+                            <div class="list-item-description pl-5 mb-3">
+                                {{ qa.answer_description }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
             </div>
-
+        </div>
+        <div class="columns">
+            <div class="column">
+                <div class="button is-warning is-light"
+                    hx-get="{{ url_for("dashboard_assessment_review_page", assessment_id=assessment_id) }}"
+                    hx-select=".bat-main-content"
+                    hx-target=".bat-main-content"
+                    hx-swap="outerHTML"
+                    hx-push-url="true"
+                    >
+                    Return
+                </div>
+            </div>
         </div>
         {% endblock %}
     </div>

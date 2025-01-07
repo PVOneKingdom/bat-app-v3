@@ -19,7 +19,7 @@ function handleMouseOverBody(show, element) {
                 labelDiv.style.borderRadius = "4px";
                 labelDiv.style.pointerEvents = "none"; // Prevent interactions with the label
                 labelDiv.style.zIndex = "1000";
-                document.body.appendChild(labelDiv);
+                document.querySelector(".bat-main-content").appendChild(labelDiv);
             }
 
             // Set the content of the label
