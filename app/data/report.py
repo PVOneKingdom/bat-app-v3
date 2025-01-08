@@ -11,10 +11,10 @@ from app.model.report import Report
 curs.execute("""
              create table if not exists reports(
                  report_id text primary key,
-                 assessment_id text references assessment( assessment_id ),
+                 assessment_id text references assessments( assessment_id ),
                  public integer default 0,
                  key text,
-                 report_time text,
+                 report_name text,
                  summary text,
                  recommendation_title_1 text,
                  recommendation_content_1 text,
@@ -36,7 +36,7 @@ def report_row_to_model(row: tuple) -> Report:
      assessment_id, \
      public, \
      key, \
-     report_time, \
+     report_name, \
      summary, \
      recommendation_title_1, \
      recommendation_content_1, \
@@ -50,7 +50,7 @@ def report_row_to_model(row: tuple) -> Report:
              assessment_id=assessment_id,
              public=public,
              key=key,
-             report_time=report_time,
+             report_name=report_name,
              summary=summary,
              recommendation_title_1=recommendation_title_1,
              recommendation_content_1=recommendation_content_1,
@@ -72,7 +72,7 @@ def create_report(report: Report) -> Report:
             report_id,
             assessment_id,
             key,
-            report_time,
+            report_name,
             summary,
             recommendation_title_1,
             recommendation_content_1,
@@ -85,7 +85,7 @@ def create_report(report: Report) -> Report:
             :report_id,
             :assessment_id,
             :key,
-            :report_time,
+            :report_name,
             :summary,
             :recommendation_title_1,
             :recommendation_content_1,
@@ -112,7 +112,7 @@ def get_report(report_id: str) -> Report:
         assessment_id,
         public,
         key,
-        report_time,
+        report_name,
         summary,
         recommendation_title_1,
         recommendation_content_1,
@@ -143,7 +143,7 @@ def get_all_reports() -> list[Report]:
         assessment_id,
         public,
         key,
-        report_time,
+        report_name,
         summary,
         recommendation_title_1,
         recommendation_content_1,
@@ -174,7 +174,7 @@ def update_report(report: Report) -> Report:
     set
         assessment_id = :assessment_id,
         key = :key,
-        report_time = :report_time,
+        report_name = :report_name,
         summary = :summary,
         recommendation_title_1 = :recommendation_title_1,
         recommendation_content_1 = :recommendation_content_1,

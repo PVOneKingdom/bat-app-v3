@@ -1,0 +1,53 @@
+{# This is the root page of the questions link. Other sublinks are derived from this page #}
+
+{% extends "dashboard/dashboard.html" %}
+{% block body %}
+<section class="bat-main-content is-flex pt-6">
+    <div class="container is-max-tablet">
+        {% block body_content %}
+        <h2 class="title is-2 has-text-centered">{{ title }}</h2>
+        {% include "helpers/notification.html" %}
+        <div class="columns">
+            <div class="column">
+                <form
+                    hx-post="{{ request.url }}"
+                    hx-select=".bat-main-content"
+                    hx-target=".bat-main-content"
+                    hx-swap="outerHTML"
+                    hx-ext="json-enc">
+                    <div class="field">
+                        <label class="label">Report for assessment:</label>
+                        <div class="select is-fullwidth">
+                            <select name="assessment_id">
+                                {% for assessment in assessments %}
+                                <option value="{{ assessment.assessment_id }}">{{ assessment.assessment_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label class="label">Report name</label>
+                            <div class="control">
+                                <input name="report_name" class="input" type="text" placeholder="Country name Q1 2025">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content is-flex is-justify-content-space-around">
+                        <div class="button is-clickable is-warning px-5"
+                            hx-get="{{ url_for("dashboard_reports_page") }}"
+                            hx-select=".bat-main-content"
+                            hx-target=".bat-main-content"
+                            hx-swap="outerHTML"
+                            hx-push-url="true"
+                            >
+                            Return
+                        </div>
+                        <button class="button is-link px-5">
+                            Create report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endblock %}
+</section>
+{% endblock %}

@@ -47,7 +47,7 @@ async def add_user(request: Request, current_user: User = Depends(user_htmx_dep)
             }
 
     template_response = jinja.TemplateResponse(
-            name="dashboard/user-add.html",
+            name="dashboard/user-create.html",
             context=context
             )
 
@@ -77,7 +77,7 @@ async def add_user_post(request: Request,  new_user: UserCreate,  current_user: 
         status_code = 403
 
     template_response = jinja.TemplateResponse(
-            name="dashboard/user-add.html",
+            name="dashboard/user-create.html",
             context=context,
             status_code=status_code
             )

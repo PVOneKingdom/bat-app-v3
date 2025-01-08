@@ -50,12 +50,13 @@
                     </div> 
                 </div>
                 {% endfor %}
-                {% else %}
-                <div class="content has-text-centered is-max-tablet">
-                    <p>No assessments were created yet. Create one first!</p>
-                </div>
                 {% endif %}
             </div>
+            {% if not assessments %}
+            <div class="content has-text-centered">
+               <p>No assessments were created yet. Create one first!</p> 
+            </div>
+            {% endif %}
         </div>
         <div class="content pt-5 is-flex is-justify-content-center">
             <a href="{{ url_for("dashboard_assessment_create_page") }}" hx-boost="true">

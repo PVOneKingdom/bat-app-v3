@@ -7,9 +7,34 @@
         {% block body_content %}
         <h2 class="title is-2 has-text-centered">{{ title }}</h2>
         {% include "helpers/notification.html" %}
-        <div class="fixed-grid has-1-cols-mobile has-2-cols-tablet has-3-cols-desktop">
-        </div>
         <div class="content pt-5 is-flex is-justify-content-center">
+            <div class="columns">
+                {% if not reports and not assessments %}
+                <div class="column has-text-centered">
+                    <p>No reports or assessments created yet.</p>
+                    <p>Create assessment first and then you can create report for it.</p>
+                </div>
+                {% endif %}
+                {% if assessments and not reports %}
+                <div class="column">
+                    <p>No reports created yet. Create one first.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="content is-flex is-justify-content-center">
+            <button class="button is-link px-5"
+                hx-get="{{ url_for("dashboard_report_create_page") }}"
+                hx-select=".bat-main-content"
+                hx-target=".bat-main-content"
+                hx-swap="outerHTML"
+                hx-push-url="true"
+                {% if not assessments %}
+                disabled
+                {% endif %}
+                >
+                Create report
+            </button>
         </div>
         {% endblock %}
     </div>
