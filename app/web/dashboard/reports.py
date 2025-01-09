@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request
 
-from app.model.report import Report, ReportCreate
+from app.model.report import Report, ReportCreate, ReportExtended
 from app.service import report as service
 from app.service import assessment as assessment_service
 
@@ -19,7 +19,7 @@ router = APIRouter()
 @router.get("", response_class=HTMLResponse, name="dashboard_reports_page")
 def get_questions(request: Request, current_user: User = Depends(user_htmx_dep)):
 
-    reports: list[Report] = service.get_all(current_user=current_user)
+    reports_extended: list[ReportExtended] = service.get_all_extended(current_user=current_user)
     assessments: list[Assessment] = assessment_service.get_all(current_user=current_user)
     
     context = {
@@ -27,7 +27,7 @@ def get_questions(request: Request, current_user: User = Depends(user_htmx_dep))
             "title":"Reports",
             "description":"List of all available reports.",
             "current_user": current_user,
-            "reports": reports,
+            "reports": reports_extended,
             "assessments": assessments
             }
 

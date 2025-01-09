@@ -15,7 +15,7 @@
                     hx-swap="outerHTML"
                     hx-push-url="true"
                     >
-                    Return
+                    &#11013;&nbsp;Return
                 </div>
             </div>
         </div>
@@ -47,7 +47,7 @@
                                 <b>Answer:</b>
                             </div>
                             <div class="list-item-description pl-5 mb-4">
-                                <div class="review-inline-cirlce {{ qa.answer_option }}"></div> {% if qa.answer_option %}{{ qa["option_" + qa.answer_option] }}{% endif %}
+                                <div class="review-inline-cirlce {{ qa.answer_option }}"></div> {% if qa.answer_option %}{{ qa["option_" + qa.answer_option] }}{% else %}<i>Unanswered</i>{% endif %}
                             </div>
                         </div>
                         <div class="list-item">
@@ -55,7 +55,11 @@
                                 <b>{{ qa.question_description }}</b>
                             </div>
                             <div class="list-item-description pl-5 mb-3">
+                                {% if qa.answer_description %}
                                 {{ qa.answer_description }}
+                                {% else %}
+                                <i>Empty answer</i>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -72,7 +76,7 @@
                     hx-swap="outerHTML"
                     hx-push-url="true"
                     >
-                    Return
+                    &#11013;&nbsp;Return
                 </div>
             </div>
         </div>

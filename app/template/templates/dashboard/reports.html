@@ -14,10 +14,21 @@
                     <p>No reports or assessments created yet.</p>
                     <p>Create assessment first and then you can create report for it.</p>
                 </div>
-                {% endif %}
-                {% if assessments and not reports %}
+                {% elif assessments and not reports %}
                 <div class="column">
                     <p>No reports created yet. Create one first.</p>
+                </div>
+                {% elif assessments and reports %}
+                <div class="columns">
+                    <div class="column">
+                    {% for report in reports %}
+                    <div class="card">
+                        <h5 class="title is-5">{{ report.report_name }}</h5>
+                        <p>
+                    </div>
+                    {% endfor %}
+                    </div>
+                    
                 </div>
                 {% endif %}
             </div>

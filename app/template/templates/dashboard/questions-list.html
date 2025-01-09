@@ -19,8 +19,8 @@
     {% for question in questions_in_category %}
     <div class="pb-3">
         <div class="is-flex is-flex-direction-row">
-            <h6 class="title is-5">{{ question.question_order }}.&nbsp;</h6>
-            <h6 class="title is-6">{{ question.question }}</h6>
+            <h5 class="title is-5">{{ question.question_order }}.&nbsp;</h5>
+            <h5 class="title is-5">{{ question.question }}</h5>
         </div>
         <div class="pl-6">
             <p>
@@ -37,7 +37,7 @@
         </div>
     </div>
     <div class="container mb-6 pl-3">
-        <div class="button is-primary px-6"
+        <div class="button is-link is-light px-5"
             hx-get="{{ request.url }}/{{ question.question_id }}"
             hx-select="#question-editor"
             hx-target="#question-editor"

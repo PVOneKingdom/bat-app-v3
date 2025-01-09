@@ -7,6 +7,19 @@
         {% block body_content %}
         <h2 class="title is-2 has-text-centered">{{ title }}</h2>
         <div class="columns">
+            <div class="column">
+                <div class="button is-warning is-light px-5"
+                    hx-get="{{ url_for("dashboard_assessments_page") }}"
+                    hx-select=".bat-main-content"
+                    hx-target=".bat-main-content"
+                    hx-swap="outerHTML"
+                    hx-push-url="true"
+                    >
+                    &#11013;&nbsp;Return
+                </div>
+            </div>
+        </div>
+        <div class="columns">
             <div class="column assessment-wheel-panel is-two-fifths">
                 {% include "wheel/wheel-review.svg" %}
             </div>
@@ -28,6 +41,19 @@
                 {% endfor %}
             </div>
 
+        </div>
+        <div class="columns">
+            <div class="column">
+                <div class="button is-warning is-light px-5"
+                    hx-get="{{ url_for("dashboard_assessments_page") }}"
+                    hx-select=".bat-main-content"
+                    hx-target=".bat-main-content"
+                    hx-swap="outerHTML"
+                    hx-push-url="true"
+                    >
+                    &#11013;&nbsp;Return
+                </div>
+            </div>
         </div>
         {% endblock %}
     </div>

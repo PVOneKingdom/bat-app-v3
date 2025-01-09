@@ -31,7 +31,7 @@ def get_questions(request: Request, current_user: User = Depends(user_htmx_dep))
     return response
 
 
-@router.get("/reorganize", response_class=HTMLResponse, name="dashboard_questions_reorder_category_page")
+@router.get("/reorder", response_class=HTMLResponse, name="dashboard_questions_reorder_category_page")
 def get_questions_reorder_category(request: Request, current_user: User = Depends(user_htmx_dep)):
 
     try:
@@ -55,7 +55,7 @@ def get_questions_reorder_category(request: Request, current_user: User = Depend
 
     return response
 
-@router.post("/reorganize", response_class=HTMLResponse)
+@router.post("/reorder", response_class=HTMLResponse)
 def post_questions_reorder_category(category_new_order: QuestionCategoryReorder, request: Request, current_user: User = Depends(user_htmx_dep)):
 
     try:
