@@ -1,0 +1,92 @@
+{# This is the root page of the questions link. Other sublinks are derived from this page #}
+
+{% extends "dashboard/dashboard.html" %}
+{% block body %}
+<section class="bat-main-content is-flex pt-6">
+    <div class="container">
+        {% block body_content %}
+        <h2 class="title is-2 has-text-centered">{{ title }}</h2>
+        {% include "helpers/notification.html" %}
+        <div class="columns">
+            <div class="column">
+                <form
+                    hx-post="{{ request.url }}"
+                    hx-select=".bat-main-content"
+                    hx-target=".bat-main-content"
+                    hx-swap="outerHTML"
+                    hx-ext="json-enc">
+                    <div class="field">
+                        <label class="label">Report name</label>
+                        <div class="control">
+                            <input name="report_name" class="input" type="text" value="{{ report.report_name }}">
+                        </div>
+                    </div>
+                    <div class="py-3">
+                        <p>Report summary</p>
+                        <textarea
+                            class="textarea"
+                            name="summary"
+                            placeholder="Summary under the heading">
+                            {% if report.summary %}{{ report.summary }}{% endif %}
+                        </textarea>
+                    </div>
+                    <div class="field">
+                        <h5 class="title is-5">1. Recommendation</h5>
+                        <label class="label">Title</label>
+                        <div class="control">
+                            <input name="recommendation_title_1" class="input" type="text" value="{% if report.recommendation_title_1 %}{{ report.recommendation_title_1 }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="py-3 mb-4">
+                        <p>Content</p>
+                        <textarea
+                            class="textarea"
+                            name="recommendation_content_1"
+                            placeholder="Summary under the heading">
+                            {% if report.recommendation_content_1 %}{{ report.recommendation_content_1 }}{% endif %}
+                        </textarea>
+                    </div>
+                    <div class="field">
+                        <h5 class="title is-5">2. Recommendation</h5>
+                        <label class="label">Title</label>
+                        <div class="control">
+                            <input name="recommendation_title_2" class="input" type="text" value="{% if report.recommendation_title_2 %}{{ report.recommendation_title_2 }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="py-3 mb-4">
+                        <p>Content</p>
+                        <textarea
+                            class="textarea"
+                            name="recommendation_content_2"
+                            placeholder="Summary under the heading">
+                            {% if report.recommendation_content_2 %}{{ report.recommendation_content_2 }}{% endif %}
+                        </textarea>
+                    </div>
+                    <div class="field">
+                        <h5 class="title is-5">3. Recommendation</h5>
+                        <label class="label">Title</label>
+                        <div class="control">
+                            <input name="recommendation_title_3" class="input" type="text" value="{% if report.recommendation_title_3 %}{{ report.recommendation_title_3 }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="py-3 mb-4">
+                        <p>Content</p>
+                        <textarea
+                            class="textarea"
+                            name="recommendation_content_3"
+                            placeholder="Summary under the heading">
+                            {% if report.recommendation_content_3 %}{{ report.recommendation_content_3 }}{% endif %}
+                        </textarea>
+                    </div>
+                    <div class="content">
+                        <button type="submit" class="button is-success is-light px-5">Save</button>
+                    </div>
+                </form>
+            </div>
+            <div class="column">
+                
+            </div>
+        </div>
+        {% endblock %}
+</section>
+{% endblock %}

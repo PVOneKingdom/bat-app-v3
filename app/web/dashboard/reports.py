@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, Request
+from passlib import context
 
+from app.exception.service import Unauthorized
 from app.model.report import Report, ReportCreate, ReportExtended
 from app.service import report as service
 from app.service import assessment as assessment_service
@@ -17,7 +19,7 @@ router = APIRouter()
 
 
 @router.get("", response_class=HTMLResponse, name="dashboard_reports_page")
-def get_questions(request: Request, current_user: User = Depends(user_htmx_dep)):
+def get_questions(request: Request, filter: str | None  = None, current_user: User = Depends(user_htmx_dep)):
 
     reports_extended: list[ReportExtended] = service.get_all_extended(current_user=current_user)
     assessments: list[Assessment] = assessment_service.get_all(current_user=current_user)
@@ -91,7 +93,26 @@ def post_report_create(request: Request, report_create: ReportCreate, current_us
 @router.get("/edit/{report_id}", response_class=HTMLResponse, name="dashboard_report_edit_page")
 def get_report_edit(request: Request, report_id: str, current_user: User = Depends(user_htmx_dep)):
 
-    return
+    try:
+        report = service.get_report_extended(report_id=report_id, current_user=current_user)
+    except:
+        # NotImplemented
+        raise
+
+    context = {
+            "request": request,
+            "report": report,
+            "title":"Edit report",
+            "description":"Edit report and fill in the info.",
+            "current_user": current_user,
+            }
+
+    response = jinja.TemplateResponse(
+            context=context,
+            name="dashboard/report-edit.html"
+            )
+
+    return response
 
 
 @router.post("/edit/{report_id}", response_class=HTMLResponse)
@@ -99,4 +120,37 @@ def post_report_edit(request: Request, report_id: str, report: Report, current_u
 
     return
 
+
+@router.patch("/publish/{report_id}/{public}", response_class=HTMLResponse, name="dashboard_report_publish")
+def patch_report_publish_status(request: Request, report_id: str, public: bool, current_user: User = Depends(user_htmx_dep)):
+
+    try:
+        report = service.publish_report(report_id=report_id, public=public, current_user=current_user)
+        report_extended = service.extend_report(report=report, current_user=current_user)
+    except Unauthorized as e:
+        # NotImplemented
+        raise
+
+    context = {
+            "request": request,
+            "report": report_extended
+            }
+
+    response = jinja.TemplateResponse(
+            context=context,
+            name="dashboard/report-cell.html"
+            )
+
+    return response
+
+
+
+@router.delete("/{report_id}", response_class=HTMLResponse, name="dashboard_report_delete_page")
+def delete_report(request: Request, report_id: str, current_user: User = Depends(user_htmx_dep)):
+
+    try:
+        report_extended = service.get_report_extended(report_id=report_id, current_user=current_user)
+    except Unauthorized:
+        # NotImplemented
+        raise
 

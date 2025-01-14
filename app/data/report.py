@@ -215,26 +215,19 @@ def delete_report(report_id: str) -> Report:
         cursor.close()
 
 
-def publish_report(report_id: str, status: bool) -> Report:
+def publish_report(report_id: str, public: bool) -> Report:
 
     qry = """
     update
-        report
+        reports
     set
-        public = :status
+        public = :public
     where
         report_id = :report_id
     """
-
-    status_value: int = 0
-    if status == True:
-        status_value = 1
-    else:
-        status_value = 0
-
     params = {
             "report_id":report_id,
-            "status":status_value
+            "public":public
             }
 
     cursor = conn.cursor()

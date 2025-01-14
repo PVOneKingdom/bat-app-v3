@@ -1,0 +1,61 @@
+<div id="report-{{ report.report_id }}" class="cell">
+    <div class="card px-5 py-4"> 
+        <h4 class="title is-4">{{ report.report_name }}</h4>
+        <table class="reports-table">
+            <tbody>
+                <tr>
+                    <td>Created for:</td>
+                    <td>{{ report.assessment_name }}</td>
+                </tr>
+                <tr>
+                    <td>Recipient:</td>
+                    <td>{{ report.assessment_owner }}</td>
+                </tr>
+                <tr>
+                    <td>Public: </td>
+                    <td>{{ report.public }}</td>
+                </tr>
+                <tr>
+                    <td>Password:</td>
+                    <td><code class="px-3">{{ report.key }}</code></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="content is-flex is-gap-1">
+            <button class="button is-link is-light px-5"
+                hx-get="{{ url_for("dashboard_report_edit_page", report_id=report.report_id)  }}"
+                hx-select=".bat-main-content"
+                hx-target=".bat-main-content"
+                hx-push-url="true"
+                hx-swap="outerHTML">
+                Edit
+            </button>
+            {% if report.public %}
+            <button id="un-publish-button" class="button is-success is-light px-5"
+                hx-patch="{{ url_for("dashboard_report_publish", report_id=report.report_id, public="false")  }}"
+                hx-select="#report-{{ report.report_id }}"
+                hx-target="#report-{{ report.report_id }}"
+                hx-swap="outerHTML">
+                Unpublish
+            </button>
+            {% else %}
+            <button id="un-publish-button" class="button is-warning is-light px-5"
+                hx-patch="{{ url_for("dashboard_report_publish", report_id=report.report_id, public="true")  }}"
+                hx-select="#report-{{ report.report_id }}"
+                hx-target="#report-{{ report.report_id }}"
+                hx-swap="outerHTML">
+                Publish
+            </button>
+                {% endif %}
+            <button
+                class="button is-danger is-light"
+                hx-delete="{{ url_for("dashboard_report_delete_page", report_id=report.report_id) }}"
+                hx-confirm="Delete report {{ report.report_name }}?"
+                hx-select="#report-{{ report.report_id }}"
+                hx-target="#report-{{ report.report_id }}"
+                hx-swap="outerHTML">
+                Delete
+            </button>
+        </div>
+    </div>
+</div>

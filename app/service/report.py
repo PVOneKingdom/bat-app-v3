@@ -73,6 +73,15 @@ def create_report(report_create: ReportCreate, current_user: User) -> Report:
     return data.create_report(report=report)
 
 
+def publish_report(report_id: str, public: bool, current_user: User) -> Report:
+
+    if not current_user.can_manage_reports():
+        raise Unauthorized(msg="You cannot manage reports.")
+
+    return data.publish_report(report_id=report_id, public=public)
+
+
+
 def get_all_extended(current_user: User) -> list[ReportExtended]:
 
     all_reports: list[Report] = get_all(current_user=current_user)

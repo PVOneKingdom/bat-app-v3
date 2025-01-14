@@ -30,6 +30,11 @@ body, .bat-body{
     gap: 1rem;
 }
 
+
+.reports-table tr td:first-child{
+    font-weight: 600;
+}
+
 input.disabled {
     cursor: not-allowed;
     background-color: #e9e9e9;
