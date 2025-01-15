@@ -1,0 +1,22 @@
+{# This is the root page of the questions link. Other sublinks are derived from this page #}
+
+{% extends "dashboard/dashboard.html" %}
+{% block body %}
+<section class="bat-main-content">
+    <div class="container is-max-tablet py-6">
+        {% block body_content %}
+        <div class="content">
+            <h2 class="title is-2 has-text-centered">{{ title }}</h2>
+            <p>{% if report.summary %}{{ report.summary }}{% endif %}</p>   
+            <h4 class="title is-4">{% if report.recommendation_title_1 %}{{ report.recommendation_title_1 }}{% endif %}</h4>
+            <p>{% if report.recommendation_content_1 %}{{ report.recommendation_content_1 }}{% endif %}</p>   
+            <h4 class="title is-4">{% if report.recommendation_title_2 %}{{ report.recommendation_title_2 }}{% endif %}</h4>
+            <p>{% if report.recommendation_content_2 %}{{ report.recommendation_content_2 }}{% endif %}</p>   
+            <h4 class="title is-4">{% if report.recommendation_title_3 %}{{ report.recommendation_title_3 }}{% endif %}</h4>
+            <p>{% if report.recommendation_content_3 %}{{ report.recommendation_content_3 }}{% endif %}</p>   
+        </div>
+
+        {% endblock %}
+    </div>
+</section>
+{% endblock %}

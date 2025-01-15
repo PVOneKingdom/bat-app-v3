@@ -8,17 +8,19 @@
                     <td>{{ report.assessment_name }}</td>
                 </tr>
                 <tr>
-                    <td>Recipient:</td>
+                    <td>User:</td>
                     <td>{{ report.assessment_owner }}</td>
                 </tr>
                 <tr>
                     <td>Public: </td>
                     <td>{{ report.public }}</td>
                 </tr>
+                {#
                 <tr>
                     <td>Password:</td>
                     <td><code class="px-3">{{ report.key }}</code></td>
                 </tr>
+                #}
             </tbody>
         </table>
         <div class="content is-flex is-gap-1">
@@ -56,6 +58,9 @@
                 hx-swap="outerHTML">
                 Delete
             </button>
+            <a href="{{ url_for("dashboard_report_preview_page", report_id=report.report_id) }}" target="_blank">
+                <button class="button is-light">Preview</button>
+            </a>
         </div>
     </div>
 </div>

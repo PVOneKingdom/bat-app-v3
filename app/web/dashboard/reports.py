@@ -201,3 +201,29 @@ def delete_report(request: Request, report_id: str, current_user: User = Depends
             )
 
     return response
+
+
+@router.get("/preview/{report_id}", response_class=HTMLResponse, name="dashboard_report_preview_page")
+def get_report_preview(request: Request, report_id: str, current_user: User = Depends(user_htmx_dep)):
+
+    try:
+        report = service.get_report(report_id=report_id, current_user=current_user)
+    except:
+        #NotImplemented
+        raise
+
+    context = {
+            "request": request,
+            "title": report.report_name,
+            "report": report,
+            }
+
+    response = jinja.TemplateResponse(
+            context=context,
+            name="dashboard/report-preview.html"
+            )
+
+    return response
+
+    
+
