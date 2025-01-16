@@ -19,7 +19,7 @@ router = APIRouter()
 
 
 @router.get("", response_class=HTMLResponse, name="dashboard_reports_page")
-def get_questions(request: Request, assessment_filter: str | None  = None, current_user: User = Depends(user_htmx_dep)):
+def get_reports(request: Request, assessment_filter: str | None  = None, current_user: User = Depends(user_htmx_dep)):
 
     reports_extended: list[ReportExtended] = service.get_all_extended(current_user=current_user)
     assessments: list[Assessment] = assessment_service.get_all(current_user=current_user)

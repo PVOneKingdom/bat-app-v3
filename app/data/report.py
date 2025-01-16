@@ -166,6 +166,41 @@ def get_all_reports() -> list[Report]:
         cursor.close() 
 
 
+def get_public_reports_for_assessment(assessment_id: str) -> list[Report]:
+
+    qry = """
+    select 
+        report_id,
+        assessment_id,
+        public,
+        key,
+        report_name,
+        summary,
+        recommendation_title_1,
+        recommendation_content_1,
+        recommendation_title_2,
+        recommendation_content_2,
+        recommendation_title_3,
+        recommendation_content_3
+    from
+        reports
+    where
+        assessment_id = :assessment_id and
+        public = 1
+    """
+    
+    cursor = conn.cursor()
+    try:
+        cursor.execute(qry, {"assessment_id":assessment_id})
+        rows = cursor.fetchall()
+        if rows:
+            return [report_row_to_model(row) for row in rows]
+        else:
+            return []
+    finally:
+        cursor.close()
+
+
 def update_report(report_update: ReportUpdate) -> Report:
 
     qry = """

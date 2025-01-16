@@ -4,7 +4,9 @@ from app.model.assesment import Assessment, AssessmentAnswerPost, AssessmentNew,
 from app.model.user import User
 from app.exception.service import Unauthorized
 from app.template.init import jinja
+
 import app.data.assessment as data
+from app.service import report as report_service
 
 
 
@@ -53,9 +55,28 @@ def get_all(current_user: User) -> list[Assessment]:
 
 def get_all_for_user(current_user: User) -> list[Assessment]:
 
-    return data.get_all_for_user(user_id=current_user.user_id) # pyright: ignore
+    if current_user.user_id == None:
+        raise Unauthorized(msg="Seems that you are not authorized. Try logging in again.")
 
+    assessments = data.get_all_for_user(user_id=current_user.user_id) 
+    for assessment in assessments:
+        reports = report_service.get_public_reports_for_assessment(assessment_id=assessment.assessment_id, current_user=current_user)
+        if reports:
+            assessment.has_reports = True
+
+    return assessments
+
+def get_for_user(assessment_id: str | None, current_user: User) -> Assessment:
     
+    if assessment_id == None:
+        raise ValueError("Value assessment_id is None, cannot fetch Assessment object")
+
+    if current_user.user_id == None:
+        raise Unauthorized("Seems that you cannot access this resource. If it's mistake let us know.")
+
+    return data.get_one_for_user(assessment_id=assessment_id, user_id=current_user.user_id)
+
+
 
 def get_all_qa(assessment_id: str, current_user: User) -> list[AssessmentQA]:
 

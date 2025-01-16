@@ -7,6 +7,7 @@ import app.service.assessment as service
 from app.service.auth import user_htmx_dep
 from app.template.init import jinja
 
+from app.service import report as report_service
 
 
 router = APIRouter()
@@ -35,13 +36,6 @@ def get_assessments(request:Request, current_user: User = Depends(user_htmx_dep)
             )
 
     return response
-
-
-
-
-
-
-
 
 
 @router.get("/edit/{assessment_id}", response_class=HTMLResponse, name="app_assessment_edit_page")
@@ -161,3 +155,5 @@ def get_assessment(assessment_id: str, request:Request, current_user: User = Dep
             )
 
     return response
+
+

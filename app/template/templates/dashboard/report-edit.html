@@ -9,12 +9,28 @@
         {% include "helpers/notification.html" %}
         <div class="columns">
             <div class="column">
+                <div class="button is-warning is-light px-5 mb-5"
+                    hx-get="{{ url_for("dashboard_reports_page") }}"
+                    hx-target=".bat-main-content"
+                    hx-select=".bat-main-content"
+                    hx-swap="outerHTML"
+                    hx-push-url="true">
+                    &#11013;&nbsp;Return
+                </div>
                 {% for note in assessment_notes %}  
                 <div class="content">
                     <h5 class="title is-5">{{ note.category_name }}</h5>
                     <p>{% if note.note_content %}{{ note.note_content }}{% else %}<i>Note doesn't exist yet.</i>{% endif %}</p>
                 </div>
                 {% endfor %}
+                <div class="button is-warning is-light px-5 mt-5"
+                    hx-get="{{ url_for("dashboard_reports_page") }}"
+                    hx-target=".bat-main-content"
+                    hx-select=".bat-main-content"
+                    hx-swap="outerHTML"
+                    hx-push-url="true">
+                    &#11013;&nbsp;Return
+                </div>
             </div>
             <div class="column">
                 <form

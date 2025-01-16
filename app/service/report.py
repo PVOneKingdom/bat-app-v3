@@ -6,10 +6,10 @@ import secrets
 from app.data import report as data
 from app.model.assesment import Assessment
 from app.service import assessment as assessment_service
+from app.data import assessment as assessment_data
 from app.model.report import Report, ReportCreate, ReportExtended, ReportUpdate
 from app.model.user import User
 from app.exception.service import EndpointDataMismatch, Unauthorized
-
 
 
 # -------------------------------
@@ -32,6 +32,17 @@ def get_report(report_id: str, current_user: User) -> Report:
     return data.get_report(report_id=report_id)
 
 
+def get_public_reports_for_assessment(assessment_id: str, current_user: User) -> list[Report]:
+
+    reports = data.get_public_reports_for_assessment(assessment_id=assessment_id)
+    assessment = assessment_data.get_one(assessment_id=assessment_id)
+
+    if current_user.user_id != assessment.owner_id:
+        raise Unauthorized(msg="This assessment doesn't belong to you. You can not view it's content")
+
+    return reports
+
+
 def update_report(report_id: str, report_update: ReportUpdate, current_user: User) -> Report:
 
     if not current_user.can_manage_reports():
@@ -49,6 +60,7 @@ def delete_report(report_id: str, current_user: User) -> Report:
         raise Unauthorized(msg="You cannot manage reports.")
 
     return data.delete_report(report_id=report_id)
+
 
 def create_report(report_create: ReportCreate, current_user: User) -> Report:
 

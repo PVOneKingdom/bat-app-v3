@@ -9,6 +9,7 @@ class Assessment(BaseModel):
     last_editor: str | None
     last_editor_name: str | None
     last_edit: str | None
+    has_reports: bool | None
 
 
 class AssessmentPost(BaseModel):

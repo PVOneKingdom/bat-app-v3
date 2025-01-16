@@ -61,7 +61,8 @@ def assessment_row_to_model(row: tuple) -> Assessment:
             owner_name=owner_name,
             last_editor=last_editor,
             last_editor_name=last_editor_name,
-            last_edit=last_edit
+            last_edit=last_edit,
+            has_reports=None
             )
 
 
@@ -313,6 +314,45 @@ def get_all_for_user(user_id: str) -> list[Assessment]:
     qry = """
     seelct
     """
+
+
+def get_one_for_user(assessment_id: str, user_id: str) -> Assessment:
+
+    qry = """
+    SELECT
+        a.assessment_id,
+        a.assessment_name,
+        a.owner_id,
+        u1.username as owner_name,
+        a.last_editor,
+        u2.username as last_editor_name,
+        a.last_edit
+    FROM
+        assessments a
+    LEFT JOIN
+        users u1 ON a.owner_id = u1.user_id
+    LEFT JOIN
+        users u2 ON a.last_editor = u2.user_id
+    WHERE 
+        a.assessment_id = :assessment_id and
+        a.owner_id = :user_id
+    """
+
+    params = {
+            "assessment_id": assessment_id,
+            "user_id":user_id
+              }
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(qry, params)
+        row = cursor.fetchone()
+        if row:
+            return assessment_row_to_model(row)
+        else:
+            raise RecordNotFound(msg="Requested assessment was not found.")
+    finally:
+        cursor.close()
 
 
 def get_all() -> list[Assessment]:

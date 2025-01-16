@@ -10,7 +10,10 @@ from app.web.dashboard.users import router as dashboard_users_router
 from app.web.dashboard.questions import router as dashboard_questions_router
 from app.web.dashboard.assessments import router as dashboard_assessments_router
 from app.web.dashboard.reports import router as dashboard_reports_router
+
+from app.web.app import router as app_root_router
 from app.web.app.assessments import router as app_assessments_router
+from app.web.app.reports import router as app_reports_router
 
 
 # Main app to start
@@ -26,6 +29,8 @@ app.mount("/css", StaticFiles(directory=static_dir / "static" / "css"), name="cs
 app.mount("/images", StaticFiles(directory=static_dir / "static" / "images"), name="images")
 
 # Routers
+
+# Dashboard routers
 app.include_router(public_router)
 app.include_router(dashboard_router, prefix="/dashboard")
 app.include_router(dashboard_users_router, prefix="/dashboard/users")
@@ -33,4 +38,7 @@ app.include_router(dashboard_questions_router, prefix="/dashboard/questions")
 app.include_router(dashboard_assessments_router, prefix="/dashboard/assessments")
 app.include_router(dashboard_reports_router, prefix="/dashboard/reports")
 
+# App routers
+app.include_router(app_root_router, prefix="/app")
 app.include_router(app_assessments_router, prefix="/app/assessments")
+app.include_router(app_reports_router, prefix="/app/reports")

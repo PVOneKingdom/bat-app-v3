@@ -20,7 +20,7 @@
             {% endfor %}
         </ul>
     </nav>
-    <form class="main-form"
+    <form id="main-form" class="main-form"
         hx-post="{{ request.url }}"
         hx-ext="json-enc"
         hx-trigger="change"
@@ -88,30 +88,29 @@
                 <input name="question_order" class="input disabled" type="text" value="{{ current_question.question_order }}" readonly>
             </div>
         </div>
-
-        <div class="is-flex is-justify-content-space-around py-4">
-            {% if previous_question %}
-            <div class="button is-link is-light"
-                hx-get="{{ url_for("dashboard_assessments_page") }}/edit/{{ previous_question.assessment_id }}/{{ previous_question.category_order }}/{{ previous_question.question_order }}"
-                hx-select=".bat-main-content"
-                hx-target=".bat-main-content"
-                hx-push-url="true"
-                hx-swap="outerHTML">
-            Previous
-            </div>
-            {% endif %}
+    </form>
+        <div class="is-flex is-justify-content-space-around is-flex-direction-row-reverse py-4">
             {% if next_question %}
-            <div class="button is-link is-light"
+            <button class="button is-link is-light"
                 hx-get="{{ url_for("dashboard_assessments_page") }}/edit/{{ next_question.assessment_id }}/{{ next_question.category_order }}/{{ next_question.question_order }}"
                 hx-select=".bat-main-content"
                 hx-target=".bat-main-content"
                 hx-push-url="true"
                 hx-swap="outerHTML">
             Next
-            </div>
+            </button>
+            {% endif %}
+            {% if previous_question %}
+            <button class="button is-link is-light"
+                hx-get="{{ url_for("dashboard_assessments_page") }}/edit/{{ previous_question.assessment_id }}/{{ previous_question.category_order }}/{{ previous_question.question_order }}"
+                hx-select=".bat-main-content"
+                hx-target=".bat-main-content"
+                hx-push-url="true"
+                hx-swap="outerHTML">
+            Previous
+            </button>
             {% endif %}
         </div>
-    </form>
 </div>
 {% endblock %}
 
