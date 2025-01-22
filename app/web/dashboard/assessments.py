@@ -400,13 +400,15 @@ def get_assessment_rename_for(request: Request, assessment_id: str, current_user
 
     try:
         users = user_service.get_all(current_user=current_user)
+        assessment = service.get_assessment(assessment_id=assessment_id, current_user=current_user)
     except Unauthorized as e:
         raise e
 
     context = {
             "request":request,
             "users":users,
-            "assessment_id":assessment_id
+            "assessment_id":assessment_id,
+            "assessment":assessment,
             }
 
 
