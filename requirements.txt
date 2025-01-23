@@ -4,3 +4,4 @@ passlib
 python-multipart
 python-dotenv
 requests
+babel

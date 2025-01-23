@@ -1,9 +1,10 @@
+from passlib import context
 from app.config import  DEFAULT_USER, \
         DEFAULT_EMAIL, DEFAULT_PASSWORD
 
 from app.data import user as data
 from app.exception.database import RecordNotFound
-from app.exception.service import EndpointDataMismatch, Unauthorized
+from app.exception.service import EndpointDataMismatch, Unauthorized, SMTPCredentialsNotSet
 from app.service.auth import get_password_hash
 from app.service.mail import notify_user_created
 from app.model.user import User, UserCreate, UserRoleEnum, UserUpdate

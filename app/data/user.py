@@ -112,6 +112,7 @@ def modify(user_id: str, user_updated: User) -> User:
 
 def delete(user_id: str) -> User:
     deleted_user = get_one(user_id)
+
     qry = "delete from users where user_id = :user_id"
     params = {
             "user_id": user_id

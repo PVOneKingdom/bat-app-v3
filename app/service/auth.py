@@ -76,7 +76,12 @@ def handle_token_creation(username:str, password:str) -> str:
     token: str = generate_bearer_token(data={"user_id":user.user_id}, expires_delta=expires_delta)
     return token
 
-    
+def handle_token_renewal(current_user: User) -> str:
+    """Handles recreation of the token in case token is timing out. If token is ready
+    for refresh this function will generate new one based on the current_user object."""
+    expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    token: str = generate_bearer_token(data={"user_id":current_user.user_id}, expires_delta=expires_delta)
+    return token
 
 # -------------------------------------
 #   Retrieving the User Object
@@ -105,10 +110,12 @@ async def user_htmx_dep(request: Request) -> User | None:
         raise NonHTMXRequestException(detail="Wait while we redirect your request.")
 
     if token:
-        token_stripped = token.split("Bearer ")[1]
         try:
+            token_stripped = token.split("Bearer ")[1]
             current_user = get_current_user(token=token_stripped)
             return current_user
+        except IndexError as e:
+            raise RedirectToLoginException(detail="Bearer token doesn't contain token.")
         except InvalidBearerToken as e:
             raise RedirectToLoginException(detail=e.msg)
         except RecordNotFound as e:

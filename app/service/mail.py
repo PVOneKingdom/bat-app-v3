@@ -9,7 +9,7 @@ from app.config import SMTP_LOGIN, SMTP_PORT, SMTP_EMAIL, SMTP_SERVER, \
 from app.template.init import jinja
 from app.model.user import User
 from app.model.report import Report
-from app.exception.service import Unauthorized
+from app.exception.service import SMTPCredentialsNotSet, Unauthorized
 
 
 def notify_user_created(new_user: User, current_user: User) -> bool:
@@ -60,11 +60,9 @@ def send_html_email(recipient_email: str, subject: str, html_message: str) -> bo
     - True if the email was sent successfully, False otherwise.
     """
 
-    print("Trying to send email")
 
     if not SMTP_ENABLED:
-        print("failing here")
-        return False
+        raise SMTPCredentialsNotSet(msg="SMTP credentials are not set. Cannot send mails.")
 
     try:
         # Create the MIMEMultipart message object

@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from app.exception.database import RecordNotFound
 from app.exception.service import IncorectCredentials, InvalidBearerToken
 from app.model.user import User, UserLogin
 from app.template.init import jinja
-from app.service.auth import handle_token_creation, auth_user, get_current_user
+from app.service.auth import handle_token_creation, auth_user, get_current_user, \
+        handle_token_renewal, user_htmx_dep
 
 router = APIRouter()
 
@@ -47,9 +48,11 @@ def logout_page_get(request: Request):
 
 @router.get("/token-check", name="token_check_endpoint")
 def token_check_get(request: Request):
+    """ Used for the purposes of determining whether or not
+    user should be redirected to the login page or if we should pass
+    user to the dash."""
 
     token = request.headers.get("Authorization")
-    data: dict = {}
 
     if not token:
         return HTTPException(status_code=401, detail="No access token appended")
@@ -92,6 +95,14 @@ def login_page_get(request: Request, expired_session: int = 0):
     return response
 
 
+@router.get("/token-renew", name="token_renew_endpoint")
+def post_token_refresh(request: Request, current_user: User = Depends(user_htmx_dep)):
+
+    new_token = handle_token_renewal(current_user=current_user)
+
+    return {"access_token":new_token}
+
+
 @router.post("/login", response_class=HTMLResponse)
 def login_page_post(credentials: UserLogin, request: Request):
 
@@ -113,6 +124,7 @@ def login_page_post(credentials: UserLogin, request: Request):
 
         current_user = auth_user(username=credentials.username, password=credentials.password)
         user_role = current_user.role.value
+        context["token_manager_start"] = True
         if user_role == "user":
             context["redirect_to"] = request.url_for("app_assessments_page")
         if user_role == "coach" or user_role == "admin":

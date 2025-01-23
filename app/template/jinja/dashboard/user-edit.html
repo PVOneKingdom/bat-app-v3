@@ -3,11 +3,7 @@
 {% block body %}
 <div class="container is-max-tablet pb-6">
     <h2 class="title is-2 has-text-centered">Modify {{ user_for_edit.username }}</h2>
-    {% if successful_update  == True %}
-    <div class="notification is-success">
-        User updated successfully.
-    </div>
-    {% endif %}
+    {% include "helpers/notification.html" %}
     <form class="main-form" hx-put="{{ url_for("dashboard_users_page") }}/{{ user_for_edit.user_id }}" hx-target="body" hx-ext="json-enc">
         <div class="field">
             <label class="label">E-mail</label>

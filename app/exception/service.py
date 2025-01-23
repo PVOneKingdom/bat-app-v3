@@ -25,3 +25,8 @@ class EndpointDataMismatch(Exception):
 class InvalidNewOrderData(Exception):
     def __init__(self, msg: str):
         self.msg = msg
+
+class SMTPCredentialsNotSet(Exception):
+    def __init__(self, msg: str):
+        self.msg = msg
+

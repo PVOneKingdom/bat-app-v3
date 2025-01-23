@@ -5,6 +5,7 @@ from sqlite3 import IntegrityError
 from app.exception.database import RecordNotFound, UsernameOrEmailNotUnique
 from app.exception.service import EndpointDataMismatch, Unauthorized
 from app.model.user import User, UserCreate, UserUpdate
+from app.config import SMTP_ENABLED
 from app.template.init import jinja
 from app.service.auth import user_htmx_dep
 from app.web import prepare_notification
@@ -70,7 +71,10 @@ async def add_user_post(request: Request,  new_user: UserCreate,  current_user: 
 
     try:
         created_user: User = service.create(new_user, current_user)
-        context.update(prepare_notification(True, "success", f"User {created_user.username} created!"))
+        notification_content = f"User {created_user.username} created!"
+        if not SMTP_ENABLED:
+            notification_content += " Mail server not configured. You need to notify user manually."
+        context.update(prepare_notification(True, "success", notification_content))
     except Unauthorized as e:
         context.update(prepare_notification(True, "danger", e.msg))
         status_code = 401

@@ -27,7 +27,12 @@
                                 </tr>
                                 <tr>
                                     <td>Last Editor:</td>
-                                    <td>{{ assessment.last_editor_name }}</td>
+                                    <td>{% if assessment.last_edit and not assessment.last_editor_name %}
+                                        <i>Deleted user</i>
+                                        {% else %}
+                                        {{ assessment.last_editor_name }}
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Last Edited: </td>
