@@ -1,8 +1,10 @@
 <div id="mobile-menu" class="navbar-menu">
     <div class="navbar-end">
+        {#
         <a href="{{ url_for("dashboard") }}" class="navbar-item {% if request.url == url_for("dashboard") %} has-text-weight-bold {% endif %}">
             Dashboard
         </a>
+        #}
         <a href="{{ url_for("dashboard_assessments_page") }}" class="navbar-item {% if request.url == url_for("dashboard_assessments_page") %} has-text-weight-bold {% endif %}">
             Assessments
         </a>
