@@ -1,7 +1,7 @@
 class TokenManager {
     constructor() {
         if (TokenManager.instance) {
-            console.log("TokenManager instance already exists.");
+            // console.log("TokenManager instance already exists.");
             return TokenManager.instance;
         }
 
@@ -29,9 +29,9 @@ class TokenManager {
         const { time_to_expire } = tokenInfo;
 
         if (time_to_expire > 10 * 60 * 1000) { // More than 10 minutes left
-            console.log("Token is valid. No action needed.");
+            // console.log("Token is valid. No action needed.");
         } else if (time_to_expire > 0) { // Less than 10 minutes left
-            console.log("Token is close to expiration. Attempting to renew token.");
+            // console.log("Token is close to expiration. Attempting to renew token.");
             this.renewToken();
         } else { // Token is expired
             console.warn("Token is expired. Removing token and stopping interval.");
@@ -85,7 +85,7 @@ class TokenManager {
     // Start the interval to check token expiration every 3 minutes
     startInterval() {
         if (this.intervalId) {
-            console.log("Interval already running.");
+            // console.log("Interval already running.");
             return;
         }
 
@@ -93,7 +93,7 @@ class TokenManager {
             this.checkTokenTimeToExpire();
         }, 3 * 60 * 1000); // Every 3 minutes
 
-        console.log("TokenManager interval started.");
+        // console.log("TokenManager interval started.");
     }
 
     // Stop the interval
@@ -101,41 +101,41 @@ class TokenManager {
         if (this.intervalId) {
             clearInterval(this.intervalId);
             this.intervalId = null;
-            console.log("TokenManager interval stopped.");
+            // console.log("TokenManager interval stopped.");
         }
     }
 
     // Restart the interval
     restartInterval() {
-        console.log("Restarting TokenManager interval...");
+        // console.log("Restarting TokenManager interval...");
         this.stopInterval();
         this.startInterval();
     }
 
     // Handle token refresh and restart interval
     handleTokenRefresh(newToken) {
-        console.log("Handling token refresh...");
+        // console.log("Handling token refresh...");
         localStorage.setItem('access_token', `Bearer ${newToken}`);
         this.restartInterval();
-        console.log("Token refreshed and interval restarted.");
+        // console.log("Token refreshed and interval restarted.");
     }
 
     // Remove the token from localStorage
     removeToken() {
         localStorage.removeItem('access_token');
-        console.log("Token removed from localStorage.");
+        // console.log("Token removed from localStorage.");
     }
 
     // Store the currently open page URL to localStorage
     storeLastPageUrl() {
         const currentPage = window.location.href;
         localStorage.setItem('last_page_url', currentPage);
-        console.log("Last page URL stored:", currentPage);
+        // console.log("Last page URL stored:", currentPage);
     }
 
     // Function to renew the token
     renewToken() {
-        console.log("Renewing token...");
+        // console.log("Renewing token...");
 
         const accessToken = window.localStorage.getItem("access_token");
 
@@ -160,7 +160,7 @@ class TokenManager {
             })
             .then((data) => {
                 if (data && data.access_token) {
-                    console.log("Token successfully renewed:", data);
+                    // console.log("Token successfully renewed:", data);
                     window.localStorage.setItem("access_token", data.access_token);
                 } else {
                     console.error("Token renewal response is missing 'access_token'.", data);
@@ -175,6 +175,6 @@ class TokenManager {
 // Automatically initialize the TokenManager on page load and expose it globally
 window.addEventListener('load', () => {
     window.tokenManager = new TokenManager(); // Assign the instance to a global variable
-    console.log("TokenManager initialized and accessible as 'window.tokenManager'.");
+    // console.log("TokenManager initialized and accessible as 'window.tokenManager'.");
 });
 
