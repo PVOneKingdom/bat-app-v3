@@ -64,6 +64,9 @@
                 </div>
             </div>
             <div id="assessment-question-panel" class="column">
+                <div class="py-5 mb-5 has-text-centered">
+                    <h4 class="title is-4">{{ assessment_category_qa[0].category_name }}</h4>
+                </div>
                 {% for qa in assessment_category_qa %}
                 <h6 class="title is-6 mb-2">{{ qa.question_order }}. {{ qa.question }}</h6>
                 <div class="pl-4 pb-4">
