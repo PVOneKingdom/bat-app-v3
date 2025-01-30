@@ -154,6 +154,3 @@ def create_password_reset_token(email: str) -> str | bool:
         # no handle should be added here. Unless we want to track if someone
         # is brute forcing the password resset functionality for some reason
         return False
-    
-        
-

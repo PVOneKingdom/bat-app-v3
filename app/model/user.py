@@ -37,7 +37,7 @@ class UserUpdate(BaseModel):
         return value
 
 
-class PasswordReset(BaseModel):
+class UserPasswordResetToken(BaseModel):
     user_id: str = Field(..., max_length=36, min_length=36)
     password_reset_token: str | None
     reset_token_expires: str | None

@@ -1,6 +1,6 @@
 from sqlite3 import IntegrityError
 from app.data.init import conn, curs
-from app.model.user import User
+from app.model.user import User, UserPasswordResetToken
 from app.exception.database import RecordNotFound, UsernameOrEmailNotUnique
 
 
@@ -14,8 +14,17 @@ curs.execute("""create table if not exists users(
     reset_token_expires int
     )""")
 
+
+# -------------------------------
+#   Central Functions
+# -------------------------------
+
+
 def row_to_model(row: tuple) -> User:
-    user_id, username, email, hash, role = row
+
+    user_id, username, email, hash, role, \
+            password_reset_token, reset_token_expires = row
+
     return User(
         user_id=user_id,
         username=username,
@@ -23,6 +32,16 @@ def row_to_model(row: tuple) -> User:
         hash=hash,
         role=role
     )
+
+def token_row_to_model(row: tuple) -> UserPasswordResetToken:
+
+    user_id, password_reset_token, reset_token_expires = row
+
+    return UserPasswordResetToken(
+            user_id=user_id,
+            password_reset_token=password_reset_token,
+            reset_token_expires=reset_token_expires
+            )
 
 
 def model_to_dict(user: User) -> dict:
@@ -33,6 +52,11 @@ def model_to_dict(user: User) -> dict:
             "hash": user.hash,
             "role": user.role.value,
             }
+
+
+# -------------------------------
+#   CRUDs
+# -------------------------------
 
 
 def get_one(user_id: str | None) -> User:
@@ -142,12 +166,14 @@ def delete(user_id: str) -> User:
     return deleted_user
 
 
-def set_password_reset_token(user_id: str, token: str, token_expires: int) -> bool:
+def set_password_reset_token(user_id: str, token: str, token_expires: int) -> UserPasswordResetToken:
 
     qry = """
-    insert into
-        users(password_reset_token, reset_token_expires)
-        values(:password_reset_token, :reset_token_expires)
+    update
+        users
+    set
+        password_reset_token = :password_reset_token,
+        reset_token_expires = :reset_token_expires
     where
         user_id = :user_id
     """
@@ -162,8 +188,35 @@ def set_password_reset_token(user_id: str, token: str, token_expires: int) -> bo
     try:
         cursor.execute(qry, params)
         conn.commit()
-        return True
+        return get_password_reset_token(user_id=user_id)
     finally:
         cursor.close()
 
+
+def get_password_reset_token(user_id: str) -> UserPasswordResetToken:
+
+    qry = """
+    select
+        user_id,
+        password_reset_token,
+        reset_token_expires
+    from
+        users
+    where
+        user_id = :user_id
+    """
+
+    params = {"user_id":user_id}
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(qry, params)
+        row = cursor.fetchone()
+        if row:
+            token = token_row_to_model(row)
+            return token
+        else:
+            raise RecordNotFound(msg="No record found for password reset token.")
+    finally:
+        cursor.close()
 
