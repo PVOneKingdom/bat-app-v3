@@ -9,7 +9,7 @@ from app.exception.database import RecordNotFound
 from app.exception.service import EndpointDataMismatch, InvalidFormEntry, Unauthorized, SMTPCredentialsNotSet
 from app.service.auth import get_password_hash
 from app.service.mail import notify_user_created
-from app.model.user import User, UserCreate, UserRoleEnum, UserUpdate
+from app.model.user import User, UserCreate, UserPasswordResetToken, UserRoleEnum, UserUpdate
 from uuid import uuid4
 
 # -------------------------------
@@ -148,6 +148,9 @@ def create_password_reset_token(email: str) -> str | bool:
         expires_at = now + timedelta(minutes=60)
         reset_token: str = secrets.token_hex(64)
         token_expires: int = int(expires_at.timestamp())
+        if not type(user.user_id) == str:
+            raise RecordNotFound(msg="User id is not valid id")
+        token_object: UserPasswordResetToken = data.set_password_reset_token(user_id=user.user_id, token=reset_token, token_expires=token_expires)
         return True
     except RecordNotFound as e:
         # Email not found but for preventing leaking infromation
