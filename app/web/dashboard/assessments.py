@@ -250,10 +250,11 @@ def get_answer_question_review_page(request:Request, assessment_id: str, current
 
 
 @router.get("/review/{assessment_id}/{category_order}", response_class=HTMLResponse, name="dashboard_assessment_category_review_page")
-def get_answer_question_category_review_page(assessment_id: str,
-                                             category_order: int,
-                                             request:Request,
-                                             current_user: User = Depends(user_htmx_dep)):
+def get_answer_question_category_review_page(
+        assessment_id: str,
+        category_order: int,
+        request:Request,
+        current_user: User = Depends(user_htmx_dep)):
 
     context = {
             "request": request,
@@ -280,9 +281,6 @@ def get_answer_question_category_review_page(assessment_id: str,
 
         previous_category, next_category = service.get_neighbouring_categories_number(category_order=category_order)
 
-        print(f"Previous category: {previous_category}")
-        print(f"Next category: {next_category}")
-
         context["previous_category"] = previous_category
         context["next_category"] = next_category
         context["assessment_qa"] = assessment_qa
@@ -301,7 +299,12 @@ def get_answer_question_category_review_page(assessment_id: str,
     return response
 
 @router.put("/review/{assessment_id}/{category_order}", response_class=HTMLResponse)
-def put_answer_question_category_review_page(request:Request, assessment_id: str, category_order: int, assessment_note: AssessmentNote, current_user: User = Depends(user_htmx_dep)):
+def put_answer_question_category_review_page(
+        request:Request,
+        assessment_id: str,
+        category_order: int,
+        assessment_note: AssessmentNote,
+        current_user: User = Depends(user_htmx_dep)):
 
     context = {
             "request": request,
@@ -330,6 +333,11 @@ def put_answer_question_category_review_page(request:Request, assessment_id: str
                 assessment_id=assessment_id,
                 category_order=category_order,
                 current_user=current_user)
+
+        previous_category, next_category = service.get_neighbouring_categories_number(category_order=category_order)
+
+        context["previous_category"] = previous_category
+        context["next_category"] = next_category
 
         context["assessment_qa"] = assessment_qa
         context["assessment_category_qa"] = assessment_category_qa
