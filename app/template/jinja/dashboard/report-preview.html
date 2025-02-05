@@ -5,6 +5,9 @@
 <section class="bat-main-content">
     <div class="container is-max-tablet py-6">
         {% block body_content %}
+        <div class="bat-print-button is-flex is-justify-content-flex-end">
+            <button class="button is-info is-light" onClick="window.print()">Print</button>
+        </div>
         <div class="content">
             <h2 class="title is-2 has-text-centered">{{ title }}</h2>
             <div class="columns py-5">
