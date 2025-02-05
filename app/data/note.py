@@ -53,11 +53,16 @@ def row_to_extended_note_model(row: tuple) -> AssessmentNoteExtended:
     note_content, \
     category_name = row
 
+    if note_content:
+        note_content = json.loads(note_content)
+    else:
+        note_content = None
+
     return AssessmentNoteExtended(
             note_id=note_id,
             assessment_id=assessment_id,
             category_order=category_order,
-            note_content=json.loads(note_content),
+            note_content=note_content,
             category_name=category_name
             )
 

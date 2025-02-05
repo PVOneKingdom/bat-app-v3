@@ -93,6 +93,13 @@ input.disabled {
 }
 
 /* Quill css */
-#note-quill.ql-container {
+.bat-main-content .ql-container {
     height: 80%;
+    font-size: 1rem;
+}
+
+.bat-main-content .ql-container p,
+.bat-main-content .ql-container ol,
+.bat-main-content .ql-container ul {
+    padding-bottom: 1rem
 }

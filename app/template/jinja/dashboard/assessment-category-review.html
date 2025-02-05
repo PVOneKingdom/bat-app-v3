@@ -104,7 +104,9 @@
         var note_id = "{{ assessment_category_note.note_id }}";
         var category_order = "{{ assessment_category_note.category_order }}";
         {% if assessment_category_note.note_content %}
-        var note_content = "{{ assessment_category_note.note_content }}";
+        var note_content = {{ assessment_category_note.note_content | tojson }};
+        {% else %}
+        var note_content = null;
         {% endif %}
     </script>
     <script src="{{ url_for("js", path="wheel-labels.js") }}"></script>

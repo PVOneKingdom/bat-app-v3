@@ -20,7 +20,16 @@
                 {% for note in assessment_notes %}  
                 <div class="content">
                     <h5 class="title is-5">{{ note.category_name }}</h5>
-                    <p>{% if note.note_content %}{{ note.note_content }}{% else %}<i>Note doesn't exist yet.</i>{% endif %}</p>
+                    {% if note.note_content %}
+                    <div id="note-{{ note.note_id }}"></div>
+                    <script>
+                        var quillNote{{ loop.index0 }} = new Quill(
+                            "#note-{{ note.note_id }}",
+                            {"readOnly": true}
+                        );
+                        quillNote{{ loop.index0 }}.setContents( {{note.note_content | tojson }} );
+                    </script>
+                    {% endif %}
                 </div>
                 {% endfor %}
                 <div class="button is-warning is-light px-5 mt-5"

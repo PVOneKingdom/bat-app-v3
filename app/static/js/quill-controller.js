@@ -26,7 +26,7 @@ class QuillNotesManager {
             },
             "body": JSON.stringify(data)
         }).then((response)=>{
-            console.log(response)
+            var saveResponse = response;
         })
     }
 }
