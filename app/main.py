@@ -20,6 +20,7 @@ from app.web.dashboard.reports import router as dashboard_reports_router
 from app.web.app import router as app_root_router
 from app.web.app.assessments import router as app_assessments_router
 from app.web.app.reports import router as app_reports_router
+from app.web.app.profile import router as app_profile_router
 
 
 @asynccontextmanager
@@ -68,3 +69,4 @@ app.include_router(dashboard_reports_router, prefix="/dashboard/reports")
 app.include_router(app_root_router, prefix="/app")
 app.include_router(app_assessments_router, prefix="/app/assessments")
 app.include_router(app_reports_router, prefix="/app/reports")
+app.include_router(app_profile_router, prefix="/app/profile")

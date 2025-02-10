@@ -1,0 +1,64 @@
+{% extends "app/app.html" %}
+
+{% block body %}
+<div class="container is-max-tablet pb-6">
+    <h2 class="title is-2 has-text-centered">Modify {{ user_for_edit.username }}</h2>
+    {% include "helpers/notification.html" %}
+    <form class="main-form"
+        hx-put="{{ url_for("user_profile_page") }}"
+        hx-select=".bat-content"
+        hx-target=".bat-content"
+        hx-swap="outerHTML"
+        hx-ext="json-enc"
+        >
+        <div class="field">
+            <label class="label">E-mail</label>
+            <div class="control">
+                <input name="email" class="input selected-input" type="email" placeholder="john@doe.com" value="{{ user_for_edit.email }}">
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Username</label>
+            <div class="control">
+                <input name="username" class="input" type="text" placeholder="JohnDoe" value="{{ user_for_edit.username }}">
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Password</label>
+            <div class="control">
+                <input name="password" class="input" type="password" placeholder="Leave empty for no change">
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Role</label>
+            {% if available_roles %}
+            <div class="select is-fullwidth">
+                <select name="role">
+                    {% for role in available_roles %}
+                    <option value="{{ role }}" {% if user_for_edit.role.value == role %}selected{% endif %}>{{ role }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% else %}
+            <div class="control">
+                <input name="role" class="input is-static" type="text" value="{{ user_for_edit.role.value }}" readonly>
+            </div>
+            {% endif %}
+        </div>
+        <div class="field is-hidden">
+            <label class="label">ID</label>
+            <div class="control">
+                <input name="user_id" class="input disabled" type="text" value="{{ user_for_edit.user_id }}" readonly>
+            </div>
+        </div>
+        <div class="is-fullwidth pt-4 is-flex is-justify-content-space-around is-flex-direction-row-reverse">
+            <div class="control">
+                <input type="submit" value="Save changes" class="button is-success is-light">
+            </div>
+            <div class="control">
+                <a class="button is-warning is-light" href="{{ url_for("app_assessments_page") }}" hx-boost="true">&#11013;&nbsp;Return</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
