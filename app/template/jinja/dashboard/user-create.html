@@ -26,9 +26,9 @@
             </div>
             <div class="field">
                 <label class="label">Password</label>
-                <p class="has-text-grey-light">Password must be 12+ characters.</p>
+                <p class="has-text-grey-light">Password must be 12 - 128 characters.</p>
                 <div class="control">
-                    <input name="password" class="input" type="password" placeholder="******">
+                    <input name="password" class="input" type="password" pattern=".{12,128}" placeholder="******">
                 </div>
             </div>
             <div class="field">

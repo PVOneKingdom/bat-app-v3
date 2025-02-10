@@ -48,7 +48,6 @@ class UserSetNewPassword(BaseModel):
     token: str
     user_id: str
     password: str
-    password_confirm: str
 
 
 class User(BaseModel):

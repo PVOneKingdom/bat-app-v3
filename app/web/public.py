@@ -6,7 +6,7 @@ from app.config import SMTP_ENABLED
 from app.exception.database import RecordNotFound
 from app.exception.service import IncorectCredentials, InvalidBearerToken
 
-from app.model.user import User, UserLogin
+from app.model.user import User, UserLogin, UserSetNewPassword
 from app.model.emailreset import PasswordResetRequest
 
 
@@ -142,7 +142,7 @@ def post_password_reset(request: Request, email_reset_data: PasswordResetRequest
 
 
 
-@router.get("/set-password", response_class=HTMLResponse, name="set_password_page")
+@router.get("/set-password", response_class=HTMLResponse, name="password_set_page")
 def get_set_password(request: Request, reset_token: str | None = None):
 
     context = {
@@ -153,19 +153,54 @@ def get_set_password(request: Request, reset_token: str | None = None):
             }
 
     if not reset_token:
-        notification = prepare_notification(True, "warning", "Token missing, invalid or missing try to request password reset again.")
+        context.update(prepare_notification(True, "warning", "Token missing, invalid or missing try to request password reset again."))
     else:
 
         try:
             user: User = user_service.get_by_token(token=reset_token)
             context["user"] = user
+            email_split = user.email.split("@")
+            domain_part = email_split[-1].split(".")
+            tld = domain_part[-1]
+            context["concat_email"] = f"{email_split[0][0:2]}..{email_split[0][-2:]}@{email_split[1][0:2]}...{tld}"
         except RecordNotFound:
-            notification = prepare_notification(True, "warning", "Token missing, invalid or missing try to request password reset again.")
+            context.update(prepare_notification(True, "warning", "Token missing, invalid or missing try to request password reset again."))
 
-    #not implemented
+    response = jinja.TemplateResponse(
+            name="public/password-set.html",
+            context=context,
+            )
 
-    return
+    return response
 
+
+
+@router.post("/set-password", response_class=HTMLResponse, name="password_set_page")
+def post_set_password(request: Request, set_new_password: UserSetNewPassword):
+
+    context = {
+            "request": request,
+            "title": "Set your password",
+            "description": "Password set successfuly.",
+            }
+
+    try: 
+        user = user_service.set_password_with_token(set_new_password=set_new_password)
+        print(user)
+        context["user"] = user
+        context.update(prepare_notification(True, "success", f"Password for {user.username} has been set."))
+    except Exception as e:
+        # NotImplemented
+        raise e
+
+    response = jinja.TemplateResponse(
+            name="public/password-set.html",
+            context=context,
+            )
+
+    return response
+    
+    
 
  
 @router.get("/login", response_class=HTMLResponse, name="login_page")

@@ -37,3 +37,7 @@ class InvalidFormEntry(Exception):
 class SendingEmailFailed(Exception):
     def __init__(self, msg: str):
         self.msg = msg
+
+class PasswordResetTokenExpired(Exception):
+    def __init__(self, msg: str):
+        self.msg = msg

@@ -252,3 +252,57 @@ def get_password_reset_token(user_id: str) -> UserPasswordResetToken:
     finally:
         cursor.close()
 
+
+def del_password_reset_token(user_id: str):
+
+    qry = """
+    update
+        users
+    set
+        password_reset_token = NULL,
+        reset_token_expires = NULL
+    where
+        user_id = :user_id
+    """
+
+    params = {"user_id":user_id}
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(qry, params)
+        conn.commit()
+    finally:
+        cursor.close()
+
+
+def set_password_from_token(user_id: str, token: str, password_hash: str) -> User:
+
+    qry = """
+    update
+        users
+    set
+        hash = :password_hash
+    where
+        user_id = :user_id and
+        password_reset_token = :token
+    """
+
+    params = {
+            "user_id":user_id,
+            "token":token,
+            "password_hash":password_hash
+            }
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(qry, params)
+        conn.commit()
+        del_password_reset_token(user_id=user_id)
+        return get_one(user_id=user_id)
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        cursor.close()
+
+

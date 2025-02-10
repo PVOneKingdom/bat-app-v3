@@ -7,10 +7,10 @@ from app.config import  DEFAULT_USER, \
 
 from app.data import user as data
 from app.exception.database import RecordNotFound
-from app.exception.service import EndpointDataMismatch, InvalidFormEntry, SendingEmailFailed, Unauthorized, SMTPCredentialsNotSet
+from app.exception.service import EndpointDataMismatch, InvalidFormEntry, PasswordResetTokenExpired, SendingEmailFailed, Unauthorized, SMTPCredentialsNotSet
 from app.service.auth import get_password_hash
 from app.service.mail import notify_user_created, send_password_reset
-from app.model.user import User, UserCreate, UserPasswordResetToken, UserRoleEnum, UserUpdate
+from app.model.user import User, UserCreate, UserPasswordResetToken, UserRoleEnum, UserSetNewPassword, UserUpdate
 from uuid import uuid4
 
 # -------------------------------
@@ -91,6 +91,19 @@ def create(user: UserCreate, request: Request, current_user: User) -> User:
 
 
 def get(user_id: str, current_user: User) -> User:
+
+    requesting_own_profile: bool = False
+    is_coach_or_admin: bool = False
+
+    if current_user.role == UserRoleEnum.admin or current_user.role == UserRoleEnum.coach:
+        is_coach_or_admin = True
+
+    if current_user.user_id == user_id:
+        requesting_own_profile = True
+
+    if not requesting_own_profile and not is_coach_or_admin:
+        raise Unauthorized(msg="You cannot list this user. Insufficient permissions.")
+
     user = data.get_one(user_id)
     return user
 
@@ -106,7 +119,15 @@ def get_all(current_user: User) -> list[User]:
 
 def get_by_token(token: str) -> User:
 
-    return data.get_by_token(token: str)
+    user = data.get_by_token(token=token)
+    if user.user_id:
+        token_object = data.get_password_reset_token(user_id=user.user_id)
+        now = datetime.now(timezone.utc)
+        now_int = int(now.timestamp())
+        if token_object.reset_token_expires and now_int > token_object.reset_token_expires:
+            raise PasswordResetTokenExpired(msg="Reset token is expired. Apply for new one and try again.")
+
+    return user
 
 
 
@@ -166,7 +187,6 @@ def update(user_id: str, user: UserUpdate, current_user: User) -> User:
 
 def create_password_reset_token(email: str, request: Request) -> bool:
 
-
     try:
         user: User = data.get_by(field="email", value=email)
         now = datetime.now(timezone.utc)
@@ -192,6 +212,12 @@ def create_password_reset_token(email: str, request: Request) -> bool:
         return False
 
 
-def set_password_with_token(token: str) -> User:
+def set_password_with_token(set_new_password: UserSetNewPassword) -> User:
 
-    return None
+    password_hash = get_password_hash(set_new_password.password)
+    return data.set_password_from_token(
+            user_id=set_new_password.user_id,
+            token=set_new_password.token,
+            password_hash=password_hash
+            )
+
