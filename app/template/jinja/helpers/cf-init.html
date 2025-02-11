@@ -1,0 +1,13 @@
+<script>
+(()=>{
+    let cfWrapper = document.querySelector(".cf-captcha-wrapper");
+    let cfDiv = document.createElement("div");
+    cfDiv.classList.add("cf-turnstile");
+    cfDiv.setAttribute("data-sitekey", "{{ cf_turnstile_site_key }}");
+    cfDiv.setAttribute("data-callback", "cfCallback");
+    console.log(cfDiv);
+
+    cfWrapper.appendChild(cfDiv);
+    window.turnstile.render(cfDiv);
+})();
+</script>

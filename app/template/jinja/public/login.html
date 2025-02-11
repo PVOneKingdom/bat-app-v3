@@ -22,7 +22,8 @@
                     hx-select=".bat-main-content"
                     hx-target=".bat-main-content"
                     hx-swap="outerHTML"
-                    hx-ext="json-enc">
+                    hx-ext="json-enc"
+                    >
                     <div class="field">
                         <label class="label">Username</label>
                         <div class="control">
@@ -40,12 +41,7 @@
                             <p class="bat-login-info help is-danger"></p>
                         </div>
                     </div>
-                    <div
-                        class="cf-turnstile"
-                        data-sitekey="{{ cf_turnstile_site_key }}"
-                        data-callback="cfCallback"
-                        >
-                    </div>
+                    <div class="cf-captcha-wrapper"></div>
                     <div class="field is-hidden">
                         <label class="label">CF Turnstile Token</label>
                         <div class="control">
@@ -64,16 +60,10 @@
                 {% include "helpers/focus-input-name.html" %}
                 {% include "helpers/login-set-token.html" %}
                 {% include "helpers/htmx-redirect.html" %}
+                {% include "helpers/cf-init.html" %}
             </div>       
         </div>
     </div>
-    <script>
-    setTimeout(()=>{
-        if (turnstile){
-            turnstile.reset();
-        }
-    }, 100);
-    </script>
 </section>
 {% endblock %}
 
