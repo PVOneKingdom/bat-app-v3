@@ -145,8 +145,13 @@ def cf_verify_response(response: str | None) -> bool:
             "secret":CF_TURNSTILE_SECRET_KEY,
             "response":response,
             }
+
+    __import__('pprint').pprint(data)
+
     r = requests.post(cf_siteverify_endpoint, data=data)
     r_json = r.json()
+
+    __import__('pprint').pprint(r_json)
 
     try:
         if r_json.success == True:
