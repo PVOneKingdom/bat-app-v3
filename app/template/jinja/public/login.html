@@ -40,6 +40,17 @@
                             <p class="bat-login-info help is-danger"></p>
                         </div>
                     </div>
+                    <div
+                        class="cf-turnstile"
+                        data-sitekey="{{ cf_turnstile_site_key }}"
+                        data-callback="receiver"
+                        >
+                    </div>
+                    <script>
+                        function receiver(data){
+                            console.log(data);
+                        }
+                    </script>
                     <div class="field is-flex is-justify-content-flex-end">
                         <div class="control">
                             <button id="login-button" class="button is-info px-6">Login</button>
@@ -59,6 +70,9 @@
 {% endblock %}
 
 {% block footer_scripts %}
+{% if cf_turnstile_enabled %}
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{% endif %}
 {% if token_manager_start == True %}
 {% include "helpers/token-manager-start.html" %}
 {% endif %}

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
-from app.config import SMTP_ENABLED
+from app.config import CF_TURNSTILE_ENABLED, CF_TURNSTILE_SITE_KEY, SMTP_ENABLED
 
 from app.exception.database import RecordNotFound
 from app.exception.service import IncorectCredentials, InvalidBearerToken
@@ -201,6 +201,12 @@ def post_set_password(request: Request, set_new_password: UserSetNewPassword):
     return response
     
     
+@router.get("/token-renew", name="token_renew_endpoint")
+def post_token_refresh(request: Request, current_user: User = Depends(user_htmx_dep)):
+
+    new_token = handle_token_renewal(current_user=current_user)
+
+    return {"access_token":new_token}
 
  
 @router.get("/login", response_class=HTMLResponse, name="login_page")
@@ -211,6 +217,10 @@ def login_page_get(request: Request, expired_session: int = 0):
             "title": "Login",
             "description": "Login to your BAT account.",
             }
+
+    if CF_TURNSTILE_ENABLED:
+        context["cf_turnstile_enabled"] = True
+        context["cf_turnstile_site_key"] = CF_TURNSTILE_SITE_KEY
 
     if expired_session == 1:
         context["notification"] = 1
@@ -225,12 +235,6 @@ def login_page_get(request: Request, expired_session: int = 0):
     return response
 
 
-@router.get("/token-renew", name="token_renew_endpoint")
-def post_token_refresh(request: Request, current_user: User = Depends(user_htmx_dep)):
-
-    new_token = handle_token_renewal(current_user=current_user)
-
-    return {"access_token":new_token}
 
 
 @router.post("/login", response_class=HTMLResponse)

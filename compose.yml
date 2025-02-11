@@ -10,13 +10,14 @@ services:
       - SMTP_EMAIL=
       - SMTP_SERVER=
       - SMTP_PORT=
-      # openssl rand -hex 32
-      - SECRET_KEY=
+      - SECRET_KEY=                        # openssl rand -hex 32
       - ALGORITHM=HS256                    # keep unless decided otherwise
       - ACCESS_TOKEN_EXPIRE_MINUTES=30     # good value to use
       - DEFAULT_USER=
       - DEFAULT_EMAIL=
       - DEFAULT_PASSWORD=
+      - CF_TURNSTILE_SITE_KEY=
+      - CF_TURNSTILE_SECRET_KEY=
       # Uncomment if you will run instance behind https reverse proxy
       # - FORCE_HTTPS_PATHS=True
     volumes:
