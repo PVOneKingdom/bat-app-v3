@@ -41,6 +41,7 @@
                             <p class="bat-login-info help is-danger"></p>
                         </div>
                     </div>
+                    {% if cf_turnstile_enabled %}
                     <div class="cf-captcha-wrapper"></div>
                     <div class="field is-hidden">
                         <label class="label">CF Turnstile Token</label>
@@ -48,6 +49,7 @@
                             <input class="cf-turnstile-token-field input" name="cf_turnstile_token" type="text" readonly>
                         </div>
                     </div>
+                    {% endif %}
                     <div class="field is-flex is-justify-content-flex-end">
                         <div class="control">
                             <button id="login-button" class="button is-info px-6">Login</button>
@@ -60,7 +62,9 @@
                 {% include "helpers/focus-input-name.html" %}
                 {% include "helpers/login-set-token.html" %}
                 {% include "helpers/htmx-redirect.html" %}
+                {% if cf_turnstile_enabled %}
                 {% include "helpers/cf-init.html" %}
+                {% endif %}
             </div>       
         </div>
     </div>

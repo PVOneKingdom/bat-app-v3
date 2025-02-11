@@ -1,5 +1,6 @@
 if(typeof(cfCallback) != "function"){
     window.cfCallback = (token) => {
-        console.log(token)
+        let field = document.querySelector(".cf-turnstile-token-field");
+        field.value = token;
     }
 }
