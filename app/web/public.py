@@ -187,7 +187,6 @@ def post_set_password(request: Request, set_new_password: UserSetNewPassword):
 
     try: 
         user = user_service.set_password_with_token(set_new_password=set_new_password)
-        print(user)
         context["user"] = user
         context.update(prepare_notification(True, "success", f"Password for {user.username} has been set."))
     except Exception as e:
@@ -250,10 +249,13 @@ def login_page_post(credentials: UserLogin, request: Request):
 
     status_code = 200
 
+    if CF_TURNSTILE_ENABLED:
+        context["cf_turnstile_enabled"] = True
+        context["cf_turnstile_site_key"] = CF_TURNSTILE_SITE_KEY
+
     try:
         if CF_TURNSTILE_ENABLED:
             cf_verification_passed = cf_verify_response(response=credentials.cf_turnstile_response)
-            print(f"Cf verification passed: {cf_verification_passed}")
 
         token = handle_token_creation(username=credentials.username, password=credentials.password)
         context["notification"] = 1
