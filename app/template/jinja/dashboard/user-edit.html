@@ -13,8 +13,9 @@
         </div>
         <div class="field">
             <label class="label">Username</label>
+            <p class="has-text-grey-light">Letter and numbers only</p>
             <div class="control">
-                <input name="username" class="input" type="text" placeholder="JohnDoe" value="{{ user_for_edit.username }}">
+                <input name="username" class="input" type="text" placeholder="JohnDoe" value="{{ user_for_edit.username }}" pattern="[A-Za-z0-9]*">
             </div>
         </div>
         <div class="field">

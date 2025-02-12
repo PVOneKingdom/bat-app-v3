@@ -93,7 +93,6 @@ def get_all() -> list[User]:
         cursor.close()
 
 
-
 def get_by(field: str, value: str|int ) -> User:
     qry = f"select * from users where {field} = :value"
     params = {
@@ -110,6 +109,7 @@ def get_by(field: str, value: str|int ) -> User:
             raise RecordNotFound(f"Record for {field}: {value} was not found")
     finally:
         cursor.close()
+
 
 def get_by_token(token: str) -> User:
 
@@ -134,6 +134,30 @@ def get_by_token(token: str) -> User:
     finally:
         cursor.close()
 
+
+def username_from_mail(email: str) -> str:
+
+    qry = """
+    select
+        username
+    from
+        users
+    where
+        email = :email
+    """
+
+    params = {"email":email}
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(qry, params)
+        row = cursor.fetchone()
+        if row:
+            return row[0]
+        else:
+            raise RecordNotFound(msg="No user with this email found.")
+    finally:
+        cursor.close()
 
 
 def create(user: User) -> User:
@@ -183,6 +207,7 @@ def modify(user_id: str, user_updated: User) -> User:
             raise UsernameOrEmailNotUnique(msg="Username needs to be unique. Provided username is used. Try different one.")
     finally:
         cursor.close()
+
      
 def delete(user_id: str) -> User:
     deleted_user = get_one(user_id)

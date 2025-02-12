@@ -257,6 +257,11 @@ def login_page_post(credentials: UserLogin, request: Request):
         if CF_TURNSTILE_ENABLED:
             cf_verification_passed = cf_verify_response(response=credentials.cf_turnstile_response)
 
+        # handle email logins
+        if "@" in credentials.username:
+            username = user_service.username_from_email(credentials.username)
+            credentials.username = username
+
         token = handle_token_creation(username=credentials.username, password=credentials.password)
         context["notification"] = 1
         context["notification_type"] = "success"

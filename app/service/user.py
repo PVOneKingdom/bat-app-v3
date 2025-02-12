@@ -1,13 +1,14 @@
 from fastapi import Request
 from passlib import context
 import secrets
+import re
 from datetime import datetime, timedelta, timezone
 from app.config import  DEFAULT_USER, \
         DEFAULT_EMAIL, DEFAULT_PASSWORD
 
 from app.data import user as data
 from app.exception.database import RecordNotFound
-from app.exception.service import EndpointDataMismatch, InvalidFormEntry, PasswordResetTokenExpired, SendingEmailFailed, Unauthorized, SMTPCredentialsNotSet
+from app.exception.service import EndpointDataMismatch, IncorectCredentials, InvalidFormEntry, PasswordResetTokenExpired, SendingEmailFailed, Unauthorized, SMTPCredentialsNotSet
 from app.service.auth import get_password_hash
 from app.service.mail import notify_user_created, send_password_reset
 from app.model.user import User, UserCreate, UserPasswordResetToken, UserRoleEnum, UserSetNewPassword, UserUpdate
@@ -137,6 +138,18 @@ def get_by_email(email: str, current_user: User) -> User:
         raise Unauthorized(msg="You cannot list all users, insufficient rights")
 
     return data.get_by(field="email", value=email)
+
+def username_from_email(email: str) -> str:
+
+    allowed_chars = r"^[a-zA-Z0-9@._-]+$"  # Corrected regex: Anchors and no double negation
+
+    if not re.fullmatch(allowed_chars, email):  # Use re.fullmatch for exact matching
+        raise IncorectCredentials(msg="Invalid characters found in email address.")
+
+    if not email: # Check if the input is empty
+        raise IncorectCredentials(msg="Email address is empty.")
+
+    return data.username_from_mail(email=email)
 
 
 def get_by_username(username: str, current_user: User) -> User:

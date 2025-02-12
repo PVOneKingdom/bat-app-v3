@@ -26,7 +26,7 @@
                     hx-indicator="#login-button"
                     >
                     <div class="field">
-                        <label class="label">Username</label>
+                        <label class="label">Username / Email</label>
                         <div class="control">
                             <input class="input" name="username" type="text" {% if username %}value="{{ username }}"{% endif %}>
                         </div>
@@ -37,12 +37,6 @@
                             <input class="input" name="password" type="password">
                         </div>
                     </div>
-                    <div class="field">
-                        <div class="control">
-                            <p class="bat-login-info help is-danger"></p>
-                        </div>
-                    </div>
-                    {% if cf_turnstile_enabled %}
                     <div class="cf-captcha-wrapper"></div>
                     <div class="field is-hidden">
                         <label class="label">CF Turnstile Token</label>
@@ -50,7 +44,6 @@
                             <input class="cf-turnstile-token-field input" name="cf_turnstile_response" type="text" readonly>
                         </div>
                     </div>
-                    {% endif %}
                     <div class="field is-flex is-justify-content-flex-end">
                         <div class="control">
                             <button id="login-button" class="button is-info px-6">Login</button>
