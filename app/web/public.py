@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
+from time import sleep
+from random import randrange
 
 from app.config import CF_TURNSTILE_ENABLED, CF_TURNSTILE_SITE_KEY, SMTP_ENABLED
 
@@ -247,6 +249,10 @@ def login_page_post(credentials: UserLogin, request: Request):
             "focus_input_name": "username",
             }
 
+    # Prevent information leaking through varying server response times
+    delay = randrange(100, 500) / 1000
+    sleep(delay)
+
     status_code = 200
 
     if CF_TURNSTILE_ENABLED:
@@ -255,7 +261,7 @@ def login_page_post(credentials: UserLogin, request: Request):
 
     try:
         if CF_TURNSTILE_ENABLED:
-            cf_verification_passed = cf_verify_response(response=credentials.cf_turnstile_response)
+            cf_verify_response(response=credentials.cf_turnstile_response)
 
         # handle email logins
         if "@" in credentials.username:
