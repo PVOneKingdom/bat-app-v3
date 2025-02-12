@@ -172,6 +172,7 @@ def create(user: User) -> User:
     try:
         cursor.execute(qry, params)
         inserted_row = cursor.fetchone()
+        conn.commit()
         if inserted_row:
             return row_to_model(inserted_row)
     except IntegrityError as e:
