@@ -1,4 +1,3 @@
-
 setTimeout(() => {
     window.quillController = new QuillNotesManager()
     window.quill = new Quill("#note-quill",
