@@ -13,11 +13,21 @@
                 {% for assessment in assessments %}
                 <div class="cell">
                     <div class="card p-4 content">
-                        <h3 class="title is-3">{{ assessment.assessment_name }}</h3>
+                        <div>
+                            <div
+                                class="assessment-name-row is-flex is-flex-direction-row is-justify-content-center is-align-items-center mb-4 is-clickable" 
+                                hx-get="{{ url_for("dashboard_assessment_rename", assessment_id=assessment.assessment_id) }}"
+                                hx-target=".assessment-name-row"
+                                hx-swap="outerHTML"
+                                >
+                                <h3 class="title is-3 mb-0">{{ assessment.assessment_name }}&nbsp;</h3>
+                                <span class="title is-5">&#128221;</span>
+                            </div>
+                        </div>
                         <table class="card-table">
                             <tbody>
                                 <tr class="is-clickable owner-row"
-                                    hx-get="{{ url_for("dashboard_assessment_rename", assessment_id=assessment.assessment_id) }}"
+                                    hx-get="{{ url_for("dashboard_assessment_chown", assessment_id=assessment.assessment_id) }}"
                                     hx-select=".owner-row"
                                     hx-taget=".owner-row"
                                     hx-swap="outerHTML"

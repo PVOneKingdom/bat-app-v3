@@ -4,21 +4,30 @@ from datetime import datetime
 from app.data.init import conn, curs
 import app.data.question as question_data
 from app.exception.database import RecordNotFound
-from app.model.assesment import Assessment, AssessmentAnswerPost, AssessmentChown, AssessmentNew, AssessmentQA
+from app.model.assesment import (
+    Assessment,
+    AssessmentAnswerPost,
+    AssessmentChown,
+    AssessmentNew,
+    AssessmentQA,
+)
 from app.model.question import Question, QuestionCategory
 from app.model.user import User
 
 
-curs.execute("""create table if not exists assessments(
+curs.execute(
+    """create table if not exists assessments(
     assessment_id text primary key,
     assessment_name text,
     owner_id text references users( user_id ),
     last_edit text,
     last_editor text
-    )""")
+    )"""
+)
 
 
-curs.execute("""create table if not exists assessments_questions(
+curs.execute(
+    """create table if not exists assessments_questions(
     question_id integer PRIMARY KEY,
     assessment_id text references assessments( assessment_id ),
     category_id references assessments_questions_categories( category_id ),
@@ -27,89 +36,104 @@ curs.execute("""create table if not exists assessments_questions(
     question_order integer,
     option_yes text,
     option_mid text,
-    option_no text)""")
+    option_no text)"""
+)
 
 
-curs.execute("""create table if not exists assessments_questions_categories(
+curs.execute(
+    """create table if not exists assessments_questions_categories(
     category_id integer primary key,
     assessment_id text references assessments( assessment_id ),
     category_name text,
     category_order integer
-    )""")
+    )"""
+)
 
 
-curs.execute("""create table if not exists assessments_answers(
+curs.execute(
+    """create table if not exists assessments_answers(
     answer_id text pirmary key,
     assessment_id text references assessments( assessment_id ),
     question_id integer references assessments_questions( question_id ),
     answer_option text,
     answer_description text
-    )""")
+    )"""
+)
 
 
 # -------------------------------
 #   Central Functions
 # -------------------------------
 
+
 def assessment_row_to_model(row: tuple) -> Assessment:
 
-    assessment_id, assessment_name, owner_id, \
-            owner_name, last_editor, \
-            last_editor_name, last_edit = row
+    (
+        assessment_id,
+        assessment_name,
+        owner_id,
+        owner_name,
+        last_editor,
+        last_editor_name,
+        last_edit,
+    ) = row
 
     return Assessment(
-            assessment_id=assessment_id,
-            assessment_name=assessment_name,
-            owner_id=owner_id,
-            owner_name=owner_name,
-            last_editor=last_editor,
-            last_editor_name=last_editor_name,
-            last_edit=last_edit,
-            has_reports=None
-            )
+        assessment_id=assessment_id,
+        assessment_name=assessment_name,
+        owner_id=owner_id,
+        owner_name=owner_name,
+        last_editor=last_editor,
+        last_editor_name=last_editor_name,
+        last_edit=last_edit,
+        has_reports=None,
+    )
 
 
 def assessment_question_row_to_model(row: tuple) -> AssessmentQA:
 
-    question_id, \
-    question, \
-    question_description, \
-    question_order, \
-    option_yes, \
-    option_mid, \
-    option_no, \
-    assessment_id, \
-    assessment_name, \
-    owner_id, \
-    last_edit, \
-    last_editor, \
-    category_id, \
-    category_name, \
-    category_order, \
-    answer_id, \
-    answer_option, \
-    answer_description = row
+    (
+        question_id,
+        question,
+        question_description,
+        question_order,
+        option_yes,
+        option_mid,
+        option_no,
+        assessment_id,
+        assessment_name,
+        owner_id,
+        last_edit,
+        last_editor,
+        category_id,
+        category_name,
+        category_order,
+        answer_id,
+        answer_option,
+        answer_description,
+    ) = row
 
     return AssessmentQA(
-            question_id=question_id,
-            question=question,
-            question_description=question_description,
-            question_order=question_order,
-            option_yes=option_yes,
-            option_mid=option_mid,
-            option_no=option_no,
-            assessment_id=assessment_id,
-            assessment_name=assessment_name,
-            owner_id=owner_id,
-            last_edit=last_edit,
-            last_editor=last_editor,
-            category_id=category_id,
-            category_name=category_name,
-            category_order=category_order,
-            answer_id=answer_id,
-            answer_option=answer_option,
-            answer_description=answer_description
-            )
+        question_id=question_id,
+        question=question,
+        question_description=question_description,
+        question_order=question_order,
+        option_yes=option_yes,
+        option_mid=option_mid,
+        option_no=option_no,
+        assessment_id=assessment_id,
+        assessment_name=assessment_name,
+        owner_id=owner_id,
+        last_edit=last_edit,
+        last_editor=last_editor,
+        category_id=category_id,
+        category_name=category_name,
+        category_order=category_order,
+        answer_id=answer_id,
+        answer_option=answer_option,
+        answer_description=answer_description,
+    )
+
 
 # -------------------------------
 #   assessment preparation
@@ -123,18 +147,22 @@ def create_assessment(assessment_new: AssessmentNew) -> Assessment:
     values(:assessment_id, :assessment_name, :owner_id)"""
 
     params = {
-            "assessment_id": assessment_new.assessment_id,
-            "assessment_name": assessment_new.assessment_name,
-            "owner_id": assessment_new.owner_id
-            }
+        "assessment_id": assessment_new.assessment_id,
+        "assessment_name": assessment_new.assessment_name,
+        "owner_id": assessment_new.owner_id,
+    }
 
     cursor = conn.cursor()
 
     try:
         cursor.execute(qry, params)
         conn.commit()
-        category_id_map: dict = freeze_questions_categories(assessment_new.assessment_id)
-        freeze_questions(assessment_id=assessment_new.assessment_id, category_id_map=category_id_map)
+        category_id_map: dict = freeze_questions_categories(
+            assessment_new.assessment_id
+        )
+        freeze_questions(
+            assessment_id=assessment_new.assessment_id, category_id_map=category_id_map
+        )
         prepare_answers(assessment_id=assessment_new.assessment_id)
         prepare_notes(assessment_id=assessment_new.assessment_id)
         return get_one(assessment_id=assessment_new.assessment_id)
@@ -148,17 +176,16 @@ def freeze_questions_categories(assessment_id: str) -> dict:
     category_id_map: dict = {}
 
     for category in questions_cateogies:
-        
+
         qry = """insert into
         assessments_questions_categories(assessment_id, category_name, category_order)
         values(:assessment_id, :category_name, :category_order)"""
 
         params = {
-                "assessment_id": assessment_id,
-                "category_name": category.category_name,
-                "category_order": category.category_order
-                }
-
+            "assessment_id": assessment_id,
+            "category_name": category.category_name,
+            "category_order": category.category_order,
+        }
 
         cursor = conn.cursor()
         try:
@@ -167,7 +194,7 @@ def freeze_questions_categories(assessment_id: str) -> dict:
             conn.commit()
         finally:
             cursor.close()
-    
+
     return category_id_map
 
 
@@ -186,15 +213,15 @@ def freeze_questions(assessment_id: str, category_id_map: dict) -> bool:
         category_id = category_id_map[question.category_name]
 
         params = {
-                "assessment_id": assessment_id,
-                "category_id": category_id,
-                "question": question.question,
-                "question_description": question.question_description,
-                "question_order": question.question_order,
-                "option_yes": question.option_yes,
-                "option_mid": question.option_mid,
-                "option_no": question.option_no
-                }
+            "assessment_id": assessment_id,
+            "category_id": category_id,
+            "question": question.question,
+            "question_description": question.question_description,
+            "question_order": question.question_order,
+            "option_yes": question.option_yes,
+            "option_mid": question.option_mid,
+            "option_no": question.option_no,
+        }
 
         cursor = conn.cursor()
         try:
@@ -208,7 +235,11 @@ def freeze_questions(assessment_id: str, category_id_map: dict) -> bool:
 
 def prepare_answers(assessment_id: str) -> bool:
 
-    questions: list[AssessmentQA] = filter_assessment_qa_by_category_order_and_question_id(assessment_id=assessment_id)
+    questions: list[AssessmentQA] = (
+        filter_assessment_qa_by_category_order_and_question_id(
+            assessment_id=assessment_id
+        )
+    )
 
     qry = """insert into assessments_answers(answer_id, assessment_id, question_id)
     values(:answer_id, :assessment_id, :question_id)"""
@@ -217,11 +248,11 @@ def prepare_answers(assessment_id: str) -> bool:
     try:
         for question in questions:
             params = {
-                    "answer_id": str(uuid4()),
-                    "assessment_id": assessment_id,
-                    "question_id": question.question_id
-                    }
-            cursor.execute(qry, params);
+                "answer_id": str(uuid4()),
+                "assessment_id": assessment_id,
+                "question_id": question.question_id,
+            }
+            cursor.execute(qry, params)
         conn.commit()
         return True
     finally:
@@ -236,20 +267,20 @@ def prepare_notes(assessment_id: str) -> bool:
     cursor = conn.cursor()
     try:
         for i in range(0, 13):
-            cursor.execute(qry, {"assessment_id":assessment_id, "category_order":i})
+            cursor.execute(qry, {"assessment_id": assessment_id, "category_order": i})
         conn.commit()
         return True
     finally:
         cursor.close()
 
 
-
 # -------------------------------
 #   CRUDs
 # -------------------------------
 
+
 def get_one(assessment_id: str) -> Assessment:
-    
+
     qry = """
     SELECT
         a.assessment_id,
@@ -269,7 +300,7 @@ def get_one(assessment_id: str) -> Assessment:
         a.assessment_id = :assessment_id
     """
 
-    params = {"assessment_id": assessment_id }
+    params = {"assessment_id": assessment_id}
 
     cursor = conn.cursor()
     try:
@@ -306,7 +337,7 @@ def get_all_for_user(user_id: str) -> list[Assessment]:
 
     cursor = conn.cursor()
     try:
-        cursor.execute(qry, {"user_id":user_id})
+        cursor.execute(qry, {"user_id": user_id})
         rows = cursor.fetchall()
         if rows:
             return [assessment_row_to_model(row) for row in rows]
@@ -341,10 +372,7 @@ def get_one_for_user(assessment_id: str, user_id: str) -> Assessment:
         a.owner_id = :user_id
     """
 
-    params = {
-            "assessment_id": assessment_id,
-            "user_id":user_id
-              }
+    params = {"assessment_id": assessment_id, "user_id": user_id}
 
     cursor = conn.cursor()
     try:
@@ -400,8 +428,7 @@ def delete_assessment(assessment_id: str) -> Assessment:
     qry_qc = """delete from assessments_questions_categories where assessment_id = :assessment_id"""
     qry = """delete from assessments where assessment_id = :assessment_id"""
 
-    params = {"assessment_id":assessment_id}
-
+    params = {"assessment_id": assessment_id}
 
     cursor = conn.cursor()
     try:
@@ -416,7 +443,10 @@ def delete_assessment(assessment_id: str) -> Assessment:
     finally:
         cursor.close()
 
-def filter_assessment_qa_by_category_order_and_question_id(assessment_id: str) -> list[AssessmentQA]:
+
+def filter_assessment_qa_by_category_order_and_question_id(
+    assessment_id: str,
+) -> list[AssessmentQA]:
 
     qry = """select
         q.question_id,
@@ -455,7 +485,7 @@ def filter_assessment_qa_by_category_order_and_question_id(assessment_id: str) -
         qc.category_order asc,
         q.question_order asc"""
 
-    params = {"assessment_id":assessment_id}
+    params = {"assessment_id": assessment_id}
 
     cursor = conn.cursor()
     try:
@@ -464,10 +494,12 @@ def filter_assessment_qa_by_category_order_and_question_id(assessment_id: str) -
         if rows:
             return [assessment_question_row_to_model(question) for question in rows]
         else:
-            raise RecordNotFound(msg=f"Question for assessment: {assessment_id} was not found.")
+            raise RecordNotFound(
+                msg=f"Question for assessment: {assessment_id} was not found."
+            )
     finally:
         cursor.close()
-            
+
 
 def save_answer(answer_data: AssessmentAnswerPost):
 
@@ -478,12 +510,12 @@ def save_answer(answer_data: AssessmentAnswerPost):
     where
         answer_id = :answer_id
     """
-    
+
     params = {
-            "answer_option":answer_data.answer_option,
-            "answer_description":answer_data.answer_description,
-            "answer_id":answer_data.answer_id
-            }
+        "answer_option": answer_data.answer_option,
+        "answer_description": answer_data.answer_description,
+        "answer_id": answer_data.answer_id,
+    }
 
     cursor = conn.cursor()
     try:
@@ -491,6 +523,7 @@ def save_answer(answer_data: AssessmentAnswerPost):
         conn.commit()
     finally:
         cursor.close()
+
 
 def update_last_edit(assessment_id: str, current_user: User) -> bool:
 
@@ -508,10 +541,10 @@ def update_last_edit(assessment_id: str, current_user: User) -> bool:
     formatted_date = format_datetime(now, format="MMM d, y, HH:mm", locale="en_US")
 
     params = {
-            "last_edit":formatted_date,
-            "last_editor":current_user.user_id,
-            "assessment_id":assessment_id
-            }
+        "last_edit": formatted_date,
+        "last_editor": current_user.user_id,
+        "assessment_id": assessment_id,
+    }
 
     cursor = conn.cursor()
     try:
@@ -534,14 +567,41 @@ def chown(assessment_chown: AssessmentChown) -> bool:
     """
 
     params = {
-            "owner_id":assessment_chown.new_owner_id,
-            "assessment_id":assessment_chown.assessment_id
-            }
+        "owner_id": assessment_chown.new_owner_id,
+        "assessment_id": assessment_chown.assessment_id,
+    }
 
     cursor = conn.cursor()
     try:
         cursor.execute(qry, params)
         conn.commit()
         return True
+    finally:
+        cursor.close()
+
+
+def rename(assessment: Assessment) -> bool:
+
+    qry = """
+        update
+            assessments
+        set
+            assessment_name = :assessment_name
+        where
+            assessment_id = :assessment_id
+        returning *
+        """
+
+    params = assessment.model_dump()
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(qry, params)
+        row = cursor.fetchone()
+        conn.commit()
+        if row:
+            return True
+        else:
+            return False
     finally:
         cursor.close()

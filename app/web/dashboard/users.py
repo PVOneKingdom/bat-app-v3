@@ -3,7 +3,12 @@ from fastapi.responses import HTMLResponse
 from sqlite3 import IntegrityError
 
 from app.exception.database import RecordNotFound, UsernameOrEmailNotUnique
-from app.exception.service import EndpointDataMismatch, InvalidFormEntry, SendingEmailFailed, Unauthorized
+from app.exception.service import (
+    EndpointDataMismatch,
+    InvalidFormEntry,
+    SendingEmailFailed,
+    Unauthorized,
+)
 from app.model.user import User, UserCreate, UserUpdate
 from app.config import SMTP_ENABLED
 from app.template.init import jinja
@@ -18,23 +23,23 @@ router = APIRouter()
 # User management
 # -------------------------------------
 
+
 @router.get("", response_class=HTMLResponse, name="dashboard_users_page")
 def get_users(request: Request, current_user: User = Depends(user_htmx_dep)):
 
     users = service.get_all(current_user)
 
     context = {
-            "request": request,
-            "title":"Users",
-            "description":"List of users and their details.",
-            "current_user": current_user,
-            "users": users,
-            }
+        "request": request,
+        "title": "Users",
+        "description": "List of users and their details.",
+        "current_user": current_user,
+        "users": users,
+    }
 
     template_response = jinja.TemplateResponse(
-            name="dashboard/users.html",
-            context=context
-            )
+        name="dashboard/users.html", context=context
+    )
 
     return template_response
 
@@ -43,45 +48,54 @@ def get_users(request: Request, current_user: User = Depends(user_htmx_dep)):
 async def add_user(request: Request, current_user: User = Depends(user_htmx_dep)):
 
     context = {
-            "request": request,
-            "title":"Add User",
-            "description":"BAT App dashboard interface",
-            "available_roles": current_user.can_grant_roles()
-            }
+        "request": request,
+        "title": "Add User",
+        "description": "BAT App dashboard interface",
+        "available_roles": current_user.can_grant_roles(),
+    }
 
     template_response = jinja.TemplateResponse(
-            name="dashboard/user-create.html",
-            context=context
-            )
+        name="dashboard/user-create.html", context=context
+    )
 
     return template_response
 
 
 @router.post("/add", response_class=HTMLResponse)
-async def add_user_post(request: Request,  new_user: UserCreate,  current_user: User = Depends(user_htmx_dep)):
+async def add_user_post(
+    request: Request, new_user: UserCreate, current_user: User = Depends(user_htmx_dep)
+):
 
     context = {
-            "request": request,
-            "title":"Add User",
-            "description":"BAT App dashboard interface",
-            "available_roles": current_user.can_grant_roles(),
-            }
+        "request": request,
+        "title": "Add User",
+        "description": "BAT App dashboard interface",
+        "available_roles": current_user.can_grant_roles(),
+    }
 
     status_code: int = 201
 
     try:
-        created_user: User = service.create(user=new_user, request=request, current_user=current_user)
+        created_user: User = service.create(
+            user=new_user, request=request, current_user=current_user
+        )
         notification_content = f"User {created_user.username} created!"
         if not SMTP_ENABLED:
-            notification_content += " Mail server not configured. You need to notify user manually."
+            notification_content += (
+                " Mail server not configured. You need to notify user manually."
+            )
         context.update(prepare_notification(True, "success", notification_content))
     except SendingEmailFailed as e:
-        created_user = service.get_by_email(email=new_user.email, current_user=current_user)
-        context.update(prepare_notification(
-            True,
-            "warning",
-            f"User {created_user.username} was created but email wasn't sent. Verify the credentials."
-            ))
+        created_user = service.get_by_email(
+            email=new_user.email, current_user=current_user
+        )
+        context.update(
+            prepare_notification(
+                True,
+                "warning",
+                f"User {created_user.username} was created but email wasn't sent. Verify the credentials.",
+            )
+        )
     except Unauthorized as e:
         context.update(prepare_notification(True, "danger", e.msg))
         status_code = 401
@@ -93,17 +107,16 @@ async def add_user_post(request: Request,  new_user: UserCreate,  current_user: 
         status_code = 422
 
     template_response = jinja.TemplateResponse(
-            name="dashboard/user-create.html",
-            context=context,
-            status_code=status_code
-            )
+        name="dashboard/user-create.html", context=context, status_code=status_code
+    )
 
     return template_response
 
 
 @router.get("/{user_id}", response_class=HTMLResponse, name="dashboard_user_edit_page")
-async def edit_user(user_id: str, request: Request, current_user: User = Depends(user_htmx_dep)):
-
+async def edit_user(
+    user_id: str, request: Request, current_user: User = Depends(user_htmx_dep)
+):
 
     try:
         user_for_edit: User = service.get(user_id=user_id, current_user=current_user)
@@ -113,41 +126,49 @@ async def edit_user(user_id: str, request: Request, current_user: User = Depends
         raise HTTPException(status_code=403, detail=e.msg)
 
     context = {
-            "request": request,
-            "title":f"Edit user: {user_for_edit.username}",
-            "description":f"Edit details of the {user_for_edit.username}",
-            "user_for_edit":user_for_edit,
-            "available_roles": current_user.can_grant_roles()
-            }
+        "request": request,
+        "title": f"Edit user: {user_for_edit.username}",
+        "description": f"Edit details of the {user_for_edit.username}",
+        "user_for_edit": user_for_edit,
+        "available_roles": current_user.can_grant_roles(),
+    }
 
     template_response = jinja.TemplateResponse(
-            name="dashboard/user-edit.html",
-            context=context
-            )
+        name="dashboard/user-edit.html", context=context
+    )
 
     return template_response
 
 
 @router.put("/{user_id}", response_class=HTMLResponse)
-async def update_user(user_id: str, updated_user: UserUpdate, request: Request, current_user: User = Depends(user_htmx_dep)):
+async def update_user(
+    user_id: str,
+    updated_user: UserUpdate,
+    request: Request,
+    current_user: User = Depends(user_htmx_dep),
+):
 
     user_for_edit = service.get(user_id=user_id, current_user=current_user)
 
     context = {
-            "request": request,
-            "successful_update": True,
-            "available_roles": current_user.can_grant_roles(),
-            "user_for_edit": user_for_edit,
-            "title": f"Edit user: {user_for_edit.username}",
-            "description": f"Edit details of the {user_for_edit.username}"
-            }
+        "request": request,
+        "successful_update": True,
+        "available_roles": current_user.can_grant_roles(),
+        "user_for_edit": user_for_edit,
+        "title": f"Edit user: {user_for_edit.username}",
+        "description": f"Edit details of the {user_for_edit.username}",
+    }
 
     status_code = 202
 
     try:
         edited_user: User = service.update(user_id, updated_user, current_user)
         context["user_for_edit"] = edited_user
-        context.update(prepare_notification(True, "success", f"User {edited_user.username} updated!"))
+        context.update(
+            prepare_notification(
+                True, "success", f"User {edited_user.username} updated!"
+            )
+        )
     except RecordNotFound as e:
         status_code = 404
         context.update(prepare_notification(True, "warning", e.msg))
@@ -162,27 +183,31 @@ async def update_user(user_id: str, updated_user: UserUpdate, request: Request, 
         context.update(prepare_notification(True, "danger", e.msg))
 
     template_response = jinja.TemplateResponse(
-            name="dashboard/user-edit.html",
-            context=context,
-            status_code=status_code
-            )
+        name="dashboard/user-edit.html", context=context, status_code=status_code
+    )
 
     return template_response
 
 
 @router.delete("/{user_id}", response_class=HTMLResponse)
-async def delete_user(user_id: str, request: Request, current_user: User = Depends(user_htmx_dep)):
+async def delete_user(
+    user_id: str, request: Request, current_user: User = Depends(user_htmx_dep)
+):
 
     context = {
-            "request": request,
-            "title":"Users",
-            "description":"List of users and their details.",
-            "current_user": current_user,
-            }
+        "request": request,
+        "title": "Users",
+        "description": "List of users and their details.",
+        "current_user": current_user,
+    }
 
     try:
         deleted_user: User = service.delete(user_id, current_user)
-        context.update(prepare_notification(True, "success", f"User {deleted_user.username} was deleted."))
+        context.update(
+            prepare_notification(
+                True, "success", f"User {deleted_user.username} was deleted."
+            )
+        )
     except RecordNotFound as e:
         context.update(prepare_notification(True, "warning", e.msg))
     except Unauthorized as e:
@@ -192,17 +217,16 @@ async def delete_user(user_id: str, request: Request, current_user: User = Depen
         if "FOREIGN KEY constraint failed".lower() in error_message:
             user = service.get(user_id=user_id, current_user=current_user)
             notifcation = prepare_notification(
-                    show=True,
-                    notification_type="warning",
-                    notification_content=f"User {user.username} has still some resources attached. Try checking the assessments and reassigning them to someone else before deletion."
-                    )
+                show=True,
+                notification_type="warning",
+                notification_content=f"User {user.username} has still some resources attached. Try checking the assessments and reassigning them to someone else before deletion.",
+            )
             context.update(notifcation)
 
     context["users"] = service.get_all(current_user=current_user)
 
     template_response = jinja.TemplateResponse(
-            name="dashboard/users.html",
-            context=context
-            )
+        name="dashboard/users.html", context=context
+    )
 
     return template_response
