@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request
 
 from app.template.init import jinja
 from app.model.user import User
-from app.service.auth import user_htmx_dep
+from app.service.authentication import user_htmx_dep
 
 
 router = APIRouter()

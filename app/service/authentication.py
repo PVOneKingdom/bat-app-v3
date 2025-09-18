@@ -1,6 +1,10 @@
 from fastapi import HTTPException, Request
-from app.config import ACCESS_TOKEN_EXPIRE_MINUTES, \
-        SECRET_KEY, ALGORITHM, CF_TURNSTILE_SECRET_KEY
+from app.config import (
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    SECRET_KEY,
+    ALGORITHM,
+    CF_TURNSTILE_SECRET_KEY,
+)
 
 import requests
 
@@ -37,7 +41,7 @@ def get_password_hash(plain: str) -> str:
     return pwd_context.hash(plain)
 
 
-def jwt_to_user_id(token:str) -> str | None:
+def jwt_to_user_id(token: str) -> str | None:
     """Return user id from JWT access <token>"""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -50,8 +54,7 @@ def jwt_to_user_id(token:str) -> str | None:
     return username
 
 
-
-def generate_bearer_token(data: dict, expires_delta: timedelta | None = None ) -> str:
+def generate_bearer_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
@@ -70,52 +73,56 @@ def auth_user(username: str, password: str) -> User:
         raise IncorectCredentials("Incorrect Credentials")
     return user
 
-def handle_token_creation(username:str, password:str) -> str:
-    """Handles creation on the sign in. Takes in username and password and returns 
+
+def handle_token_creation(username: str, password: str) -> str:
+    """Handles creation on the sign in. Takes in username and password and returns
     bearer token: Bearer <token-value>."""
     # Checks username and password validity
     user: User = auth_user(username=username, password=password)
     expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    token: str = generate_bearer_token(data={"user_id":user.user_id}, expires_delta=expires_delta)
+    token: str = generate_bearer_token(
+        data={"user_id": user.user_id}, expires_delta=expires_delta
+    )
     return token
+
 
 def handle_token_renewal(current_user: User) -> str:
     """Handles recreation of the token in case token is timing out. If token is ready
     for refresh this function will generate new one based on the current_user object."""
     expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    token: str = generate_bearer_token(data={"user_id":current_user.user_id}, expires_delta=expires_delta)
+    token: str = generate_bearer_token(
+        data={"user_id": current_user.user_id}, expires_delta=expires_delta
+    )
     return token
+
 
 # -------------------------------------
 #   Retrieving the User Object
 # -------------------------------------
+
 
 def lookup_user(user_id: str) -> User:
     """Return a matching User fron the database for ID"""
     user: User = get_user_by_user_id(user_id=user_id)
     return user
 
+
 def get_current_user(token: str) -> User | None:
     """Dependecy that extracts data from token and returns User object"""
 
     if not (user_id := jwt_to_user_id(token)):
         raise InvalidBearerToken(msg="Invalid Bearer Token")
-    if (user := get_user_by_user_id(user_id=user_id)):
+    if user := get_user_by_user_id(user_id=user_id):
         return user
 
 
 async def user_htmx_dep(request: Request) -> User | None:
 
-    hx_request_header_content = str(request.headers.get("HX-Request")).lower()
-    is_htmx = hx_request_header_content == "true"
-    token = request.headers.get("Authorization")
+    access_token = request.cookies.get("access_token")
 
-    if not is_htmx:
-        raise NonHTMXRequestException(detail="Wait while we redirect your request.")
-
-    if token:
+    if access_token:
         try:
-            token_stripped = token.split("Bearer ")[1]
+            token_stripped = access_token.split("Bearer ")[1]
             current_user = get_current_user(token=token_stripped)
             return current_user
         except IndexError as e:
@@ -124,27 +131,30 @@ async def user_htmx_dep(request: Request) -> User | None:
             raise RedirectToLoginException(detail=e.msg)
         except RecordNotFound as e:
             raise RedirectToLoginException(detail=e.msg)
-        
-    raise RedirectToLoginException(detail="Unauthorized, probalby expired session or not loged in.")
 
-
+    raise RedirectToLoginException(
+        detail="Unauthorized, probalby expired session or not loged in."
+    )
 
 
 # -------------------------------------
 #   Cloudflare turnstile response verification
 # -------------------------------------
 
+
 def cf_verify_response(response: str | None) -> bool:
 
     if not response:
-        raise CFTurnstileVerificationFailed(msg="Captcha verification failed. Try again or contact admins if problem persists.")
+        raise CFTurnstileVerificationFailed(
+            msg="Captcha verification failed. Try again or contact admins if problem persists."
+        )
 
     cf_siteverify_endpoint = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
 
     data = {
-            "secret":CF_TURNSTILE_SECRET_KEY,
-            "response":response,
-            }
+        "secret": CF_TURNSTILE_SECRET_KEY,
+        "response": response,
+    }
 
     r = requests.post(cf_siteverify_endpoint, data=data)
     r_json = r.json()
@@ -153,13 +163,13 @@ def cf_verify_response(response: str | None) -> bool:
         if r_json["success"] == True:
             return True
         else:
-            CFTurnstileVerificationFailed(msg="Captcha verification failed. Try again or contact admins if problem persists.")
+            CFTurnstileVerificationFailed(
+                msg="Captcha verification failed. Try again or contact admins if problem persists."
+            )
     except Exception as e:
         print(str(e))
-        raise CFTurnstileVerificationFailed(msg="Captcha verification failed. Try again or contact admins if problem persists.")
+        raise CFTurnstileVerificationFailed(
+            msg="Captcha verification failed. Try again or contact admins if problem persists."
+        )
 
     return False
-
-
-
-

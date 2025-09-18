@@ -12,7 +12,7 @@ from app.exception.service import (
 from app.model.user import User, UserCreate, UserUpdate
 from app.config import SMTP_ENABLED
 from app.template.init import jinja
-from app.service.auth import user_htmx_dep
+from app.service.authentication import user_htmx_dep
 from app.web import prepare_notification
 import app.service.user as service
 

@@ -10,7 +10,7 @@ from app.model.question import (
 )
 from app.model.user import User
 from app.service import question as service
-from app.service.auth import user_htmx_dep
+from app.service.authentication import user_htmx_dep
 from app.web import prepare_notification
 
 

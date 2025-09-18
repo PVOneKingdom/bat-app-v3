@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 
-from app.service.auth import user_htmx_dep
+from app.service.authentication import user_htmx_dep
 from app.service import user as user_service
 from app.template.init import jinja
 from app.web import prepare_notification

@@ -9,7 +9,7 @@ from app.config import  DEFAULT_USER, \
 from app.data import user as data
 from app.exception.database import RecordNotFound
 from app.exception.service import EndpointDataMismatch, IncorectCredentials, InvalidFormEntry, PasswordResetTokenExpired, SendingEmailFailed, Unauthorized, SMTPCredentialsNotSet
-from app.service.auth import get_password_hash
+from app.service.authentication import get_password_hash
 from app.service.mail import notify_user_created, send_password_reset
 from app.model.user import User, UserCreate, UserPasswordResetToken, UserRoleEnum, UserSetNewPassword, UserUpdate
 from uuid import uuid4

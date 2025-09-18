@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from passlib import context
 
 from app.model.user import User
-from app.service.auth import user_htmx_dep
+from app.service.authentication import user_htmx_dep
 from app.template.init import jinja
 
 from app.service import report as service

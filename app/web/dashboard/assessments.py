@@ -14,7 +14,7 @@ from app.model.assesment import (
 )
 from app.template.init import jinja
 from app.model.user import User
-from app.service.auth import user_htmx_dep
+from app.service.authentication import user_htmx_dep
 
 import app.service.user as user_service
 import app.service.assessment as service

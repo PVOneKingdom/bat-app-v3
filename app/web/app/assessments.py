@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 from app.model.assesment import AssessmentAnswerPost, AssessmentQA
 from app.model.user import User
 import app.service.assessment as service
-from app.service.auth import user_htmx_dep
+from app.service.authentication import user_htmx_dep
 from app.template.init import jinja
 
 from app.service import report as report_service

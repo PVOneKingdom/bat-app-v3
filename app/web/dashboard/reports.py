@@ -11,7 +11,7 @@ from app.model.user import User
 from app.model.assesment import Assessment
 from app.template.init import jinja
 from fastapi.responses import HTMLResponse
-from app.service.auth import user_htmx_dep
+from app.service.authentication import user_htmx_dep
 from app.web import prepare_notification
 
 
