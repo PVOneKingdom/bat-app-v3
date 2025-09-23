@@ -32,4 +32,3 @@ function tokenLoginCheck() {
 setTimeout(() => {
     tokenLoginCheck();
 }, 300);
-

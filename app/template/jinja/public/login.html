@@ -71,7 +71,9 @@
 <script src="{{ url_for("js", path="cf-callback.js") }}"></script>
 {% endif %}
 {% if token_manager_start == True %}
+{#
 {% include "helpers/token-manager-start.html" %}
+#}
 {% endif %}
 <script src="{{ url_for("js", path="token-check.js") }}"></script>
 {% endblock %}
