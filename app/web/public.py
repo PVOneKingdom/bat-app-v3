@@ -1,7 +1,7 @@
 import os
 from typing import Annotated
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from time import sleep
 from random import randrange
 
@@ -11,6 +11,7 @@ from app.exception.auth import CFTurnstileVerificationFailed
 from app.exception.database import RecordNotFound
 from app.exception.service import IncorectCredentials, InvalidBearerToken
 
+from app.model.notification import Notification
 from app.model.user import User, UserLogin, UserSetNewPassword
 from app.model.emailreset import PasswordResetRequest
 
@@ -86,6 +87,7 @@ def token_check_get(request: Request):
         raise HTTPException(status_code=401, detail=e.msg)
 
     user_role = current_user.role.value
+    redirect_to = None
     if user_role == "user":
         redirect_to = request.url_for("app_assessments_page")
     if user_role == "coach" or user_role == "admin":
@@ -237,7 +239,14 @@ async def post_token_refresh(
 
 
 @router.get("/login", response_class=HTMLResponse, name="login_page")
-async def login_page_get(request: Request, expired_session: int = 0):
+async def login_page_get(
+    request: Request,
+    notification: Notification | None = None,
+    expired_session: int = 0,
+    status_code: int | None = None,
+):
+
+    print("got all the way here")
 
     context: dict = {
         "request": request,
@@ -249,12 +258,14 @@ async def login_page_get(request: Request, expired_session: int = 0):
         context["cf_turnstile_enabled"] = True
         context["cf_turnstile_site_key"] = CF_TURNSTILE_SITE_KEY
 
-    if expired_session == 1:
-        context["notification"] = 1
-        context["notification_type"] = "warning"
-        context["notification_content"] = (
-            "Not logged in, or session expired. Log in again."
+    if expired_session:
+        expired_notification = Notification(
+            style="warning", content="Not logged in, or session expired. Log in again."
         )
+        context["notification"] = expired_notification
+
+    if notification:
+        context["notification"] = notification
 
     response = jinja.TemplateResponse(
         name="public/login.html",
@@ -270,6 +281,7 @@ async def login_page_post(
     username: Annotated[str, Form()],
     password: Annotated[str, Form()],
     cf_token: Annotated[str | None, Form()] = None,
+    notification: Notification | None = None,
 ):
 
     context = {
@@ -300,62 +312,55 @@ async def login_page_post(
             username = user_service.username_from_email(username)
 
         token = handle_token_creation(username=username, password=password)
-        context["notification"] = 1
-        context["notification_type"] = "success"
-        context["notification_content"] = "Success! Redirecting."
 
         current_user = auth_user(username=username, password=password)
         user_role = current_user.role.value
-        context["token_manager_start"] = True
-        if user_role == "user":
-            context["redirect_to"] = request.url_for("app_assessments_page")
-        if user_role == "coach" or user_role == "admin":
-            context["redirect_to"] = request.url_for("dashboard_assessments_page")
+
+        response = None
+
+        if token and current_user and user_role:
+            if user_role == "user":
+                response = RedirectResponse(
+                    status_code=303, url=request.url_for("app_assessments_page")
+                )
+            if user_role == "coach" or user_role == "admin":
+                response = RedirectResponse(
+                    status_code=303, url=request.url_for("dashboard_assessments_page")
+                )
+
+            if not response:
+                raise IncorectCredentials(
+                    msg="Incorrect credentials, unable to authenticate."
+                )
+            # Disable secure for non https - since cookies will be rejected on LAN IP's
+            if os.getenv("FORCE_HTTPS_PATHS_ENV"):
+                response.set_cookie(
+                    key="access_token",
+                    value=token,
+                    httponly=True,
+                    secure=True,
+                    samesite="strict",
+                )
+            else:
+                response.set_cookie(
+                    key="access_token", value=token, httponly=True, samesite="strict"
+                )
+
+            return response
+
     except IncorectCredentials as e:
-        context["notification"] = 1
-        context["notification_type"] = "danger"
-        context["notification_content"] = e.msg
+        notification = Notification(style="danger", content=e.msg)
         status_code = 401
     except RecordNotFound:
-        context["notification"] = 1
-        context["notification_type"] = "danger"
-        context["notification_content"] = "Invalid credentials."
+        notification = Notification(style="danger", content="Invalid credentials.")
         status_code = 401
     except CFTurnstileVerificationFailed as e:
-        context.update(prepare_notification(True, "danger", e.msg))
+        notification = Notification(style="danger", content=e.msg)
         status_code = 401
-    except:
-        context["notification"] = 1
-        context["notification_type"] = "danger"
-        context["notification_content"] = "Error occured."
+    except Exception as e:
+        notification = Notification(style="danger", content=str(e))
         status_code = 401
-        raise
 
-    if username:
-        context["username"] = username
-        context["focus_input_name"] = "password"
-
-    response = jinja.TemplateResponse(
-        name="public/login.html", context=context, status_code=status_code
+    return await login_page_get(
+        notification=notification, request=request, status_code=status_code
     )
-
-    if not token:
-        raise HTTPException(
-            status_code=401, detail="Unsuccessful attempt to generate token."
-        )
-
-    # Disable secure for non https - since cookies will be rejected on LAN IP's
-    if os.getenv("FORCE_HTTPS_PATHS_ENV"):
-        response.set_cookie(
-            key="access_token",
-            value=token,
-            httponly=True,
-            secure=True,
-            samesite="strict",
-        )
-    else:
-        response.set_cookie(
-            key="access_token", value=token, httponly=True, samesite="strict"
-        )
-
-    return response

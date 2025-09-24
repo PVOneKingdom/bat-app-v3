@@ -1,10 +1,9 @@
-{% if notification == True %}
-<div class="notification is-{{ notification_type }} is-light">
-    {{ notification_content }}
+{% if notification %}
+<div class="notification is-{{ notification.style }} is-light">
+    {{ notification.content }}
 </div>
 {% if notification_timeout %}
 <script>
-docu
 </script>
 {% endif %}
 {% endif %}
