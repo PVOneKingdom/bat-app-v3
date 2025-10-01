@@ -232,8 +232,6 @@ async def login_page_get(
     status_code: int | None = None,
 ):
 
-    print("got all the way here")
-
     context: dict = {
         "request": request,
         "title": "Login",
@@ -285,7 +283,6 @@ async def login_page_post(
     status_code = 200
 
     if CF_TURNSTILE_ENABLED:
-        print(f"token: {cf_token}")
         context["cf_turnstile_enabled"] = True
         context["cf_turnstile_site_key"] = CF_TURNSTILE_SITE_KEY
 

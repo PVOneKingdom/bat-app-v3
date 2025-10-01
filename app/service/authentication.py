@@ -61,7 +61,6 @@ def jwt_to_expiry_status(token: str) -> int:
     1 - Token OK
     2 - Token ready for renewal
     """
-    __import__("pprint").pprint(token)
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         exp = payload.get("exp")
@@ -88,7 +87,6 @@ def jwt_extract_object(token: str) -> dict:
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        __import__("pprint").pprint(SECRET_KEY)
         if not payload:
             return {}
         return payload
