@@ -4,6 +4,19 @@
 {% block title %}{{ title }}{% endblock %}
 {% block description %}{{ description }}{% endblock %}
 
+{% block header_scripts %}
+<script src="{{ url_for("js", path="jwt-manager.js") }}" defer></script>
+<script>
+    var tokenCheckUrl = "{{ url_for("auth_token_check_endpoint") }}";
+</script>
+<script defer>
+    window.addEventListener("load", ()=>{
+        window.jwtManager = new JwtManager();
+        jwtManager.init();
+    })
+</script>
+{% endblock %}
+
 {% block menu %}
 {% include "dashboard/menu.html" %}
 {% endblock %}

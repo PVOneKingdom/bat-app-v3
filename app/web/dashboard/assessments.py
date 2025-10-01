@@ -14,6 +14,7 @@ from app.model.assesment import (
 )
 from app.template.init import jinja
 from app.model.user import User
+from app.model.notification import Notification
 from app.service.authentication import user_htmx_dep
 
 import app.service.user as user_service
@@ -125,12 +126,9 @@ def post_assessment_create(
             assessment_post=assessment_new, current_user=current_user
         )
         users: list[User] = user_service.get_all(current_user=current_user)
-        context.update(
-            prepare_notification(
-                True,
-                "success",
-                f"Assessment {assessment_new.assessment_name} successfully created.",
-            )
+        context["notification"] = Notification(
+            style="success",
+            content=f"Assessment {assessment_new.assessment_name} successfully created.",
         )
         context["users"] = user_service.get_all(current_user=current_user)
     except:
@@ -500,10 +498,9 @@ def delete_assessment(
         "assessments": assessments,
     }
 
-    context.update(
-        prepare_notification(
-            True, "success", f"Assessment {deleted_assessment.assessment_name} removed!"
-        )
+    context["notification"] = Notification(
+        style="success",
+        content=f"Assessment {deleted_assessment.assessment_name} removed!",
     )
 
     response = jinja.TemplateResponse(

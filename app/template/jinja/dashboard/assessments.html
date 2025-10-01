@@ -51,26 +51,14 @@
                             </tbody>
                         </table>
                         <div class="is-flex is-gap-2">
-                            <button
-                                class="button is-link is-light"
-                                hx-get="{{ url_for("dashboard_assessments_page") }}/edit/{{ assessment.assessment_id }}"
-                                hx-select=".bat-main-content"
-                                hx-target=".bat-main-content"
-                                hx-swap="outerHTML"
-                                hx-push-url="true"
-                                >
+                            <a href="{{ url_for("app_assessments_page") }}/edit/{{ assessment.assessment_id }}" class="button is-link is-light px-6">
                                 Edit
-                            </button>
-                                <button
+                            </a>
+                            <a
                                     class="button is-success is-light"
-                                    hx-get="{{ url_for("dashboard_assessments_page") }}/review/{{ assessment.assessment_id }}"
-                                    hx-select=".bat-main-content"
-                                    hx-target=".bat-main-content"
-                                    hx-swap="outerHTML"
-                                    hx-push-url="true"
-                                    >
+                                    href="{{ url_for("dashboard_assessments_page") }}/review/{{ assessment.assessment_id }}">
                                     Review
-                                </button>
+                                </a>
                                     <button
                                         class="button is-danger is-light"
                                         hx-delete="{{ url_for("dashboard_assessments_page") }}/{{ assessment.assessment_id }}"
@@ -94,7 +82,7 @@
             {% endif %}
         </div>
         <div class="content pt-5 is-flex is-justify-content-center">
-            <a href="{{ url_for("dashboard_assessment_create_page") }}" hx-boost="true">
+            <a href="{{ url_for("dashboard_assessment_create_page") }}">
                 <button class="button is-link">Create Assessment</button>
             </a>
         </div>

@@ -15,11 +15,8 @@
         <script src="{{ url_for("js", path="htmx.min.js") }}"></script>
         <script src="{{ url_for("js", path="json-enc.js") }}"></script>
         <script src="{{ url_for("js", path="htmx-process-errors.js") }}"></script>
-        {#<script src="{{ url_for("js", path="token-manager.js") }}"></script>#}
-        {% include "helpers/token-management-urls.html" %}
         {% block header_scripts %}
         {% endblock %}
-
     </head>
     <body>
         <div class="bat-body">
@@ -27,7 +24,7 @@
             <div class="bat-menu">
                 <section class="has-background-text-95">
                     <div class="container">
-                        <nav class="navbar has-background-text-95" role="navigation" aria-label="main navigation" hx-boost="true">
+                        <nav class="navbar has-background-text-95" role="navigation" aria-label="main navigation">
                             <div class="navbar-brand p-3">
                                 <a href="{{ url_for("homepage") }}">
                                     <img class="navbar-logo" src="{{ url_for("images", path="bat-logo-300x66.png") }}" alt="OneKingdom Bat Tool Logo">

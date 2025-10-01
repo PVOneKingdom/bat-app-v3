@@ -49,8 +49,6 @@
                 <div class="content">
                     <a href="{{ url_for("password_reset_page") }}">Reset password...</a>
                 </div>
-                {% include "helpers/login-set-token.html" %}
-                {% include "helpers/htmx-redirect.html" %}
                 {% if cf_turnstile_enabled %}
                 {% include "helpers/cf-init.html" %}
                 {% endif %}
@@ -65,10 +63,4 @@
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="{{ url_for("js", path="cf-callback.js") }}"></script>
 {% endif %}
-{% if token_manager_start == True %}
-{#
-{% include "helpers/token-manager-start.html" %}
-#}
-{% endif %}
-<script src="{{ url_for("js", path="token-check.js") }}"></script>
 {% endblock %}

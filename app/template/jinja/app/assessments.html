@@ -14,25 +14,15 @@
                         <h3 class="title is-3">{{ assessment.assessment_name }}</h3>
                         <p data-owner_id="{{ assessment.owner_id }}"><b>Owner:</b> {{ assessment.owner_name }}</p>
                         <div class="is-flex is-gap-2">
-                            <button
-                                class="button is-link is-light px-6"
-                                hx-get="{{ url_for("app_assessments_page") }}/edit/{{ assessment.assessment_id }}"
-                                hx-select=".bat-main-content"
-                                hx-target=".bat-main-content"
-                                hx-swap="outerHTML"
-                                hx-push-url="true"
-                                >
+                            <a href="{{ url_for("app_assessments_page") }}/edit/{{ assessment.assessment_id }}" class="button is-link is-light px-6">
                                 Edit
-                            </button>
+                            </a>
                             {% if assessment.has_reports %}
-                            <button class="button is-success is-light px-6"
-                                hx-get="{{ url_for("app_reports_for_assessment", assessment_id=assessment.assessment_id) }}"
-                                hx-select=".bat-main-content"
-                                hx-target=".bat-main-content"
-                                hx-swap="outerHTML"
-                                hx-push-url="true">
+                            <a
+                                class="button is-success is-light px-6"
+                                href="{{ url_for("app_reports_for_assessment", assessment_id=assessment.assessment_id) }}">
                                 Reports
-                            </button>
+                            </a>
                             {% endif %}
                         </div>
                     </div> 

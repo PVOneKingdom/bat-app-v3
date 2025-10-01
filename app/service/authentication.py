@@ -54,6 +54,48 @@ def jwt_to_user_id(token: str) -> str | None:
     return username
 
 
+def jwt_to_expiry_status(token: str) -> int:
+    """
+    Return value based on the expiration window of the token.
+    0 - Token missing or not valid
+    1 - Token OK
+    2 - Token ready for renewal
+    """
+    __import__("pprint").pprint(token)
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        exp = payload.get("exp")
+        if not exp:
+            return 0
+    except JWTError:
+        return 0
+
+    time_now = datetime.now(timezone.utc)
+    exp_time = datetime.fromtimestamp(exp, tz=timezone.utc)
+    time_remaining = (exp_time - time_now).total_seconds()
+
+    if time_remaining <= 0:
+        return 0  # Token expired
+    elif time_remaining < 180:
+        return 2  # Ready for renewal
+    else:
+        return 1  # Token OK
+
+
+def jwt_extract_object(token: str) -> dict:
+    """Extracts data dictionary from the token.
+    Returns for example user_id, and expiry time stamp."""
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        __import__("pprint").pprint(SECRET_KEY)
+        if not payload:
+            return {}
+        return payload
+    except JWTError:
+        return {}
+
+
 def generate_bearer_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
     if expires_delta:

@@ -12,7 +12,7 @@ from app.exception.database import RecordNotFound
 from app.exception.service import IncorectCredentials, InvalidBearerToken
 
 from app.model.notification import Notification
-from app.model.user import User, UserLogin, UserSetNewPassword
+from app.model.user import User, UserSetNewPassword
 from app.model.emailreset import PasswordResetRequest
 
 
@@ -74,13 +74,15 @@ def token_check_get(request: Request):
     user should be redirected to the login page or if we should pass
     user to the dash."""
 
-    token = request.headers.get("Authorization")
+    token = request.cookies.get("access_token")
 
     if not token:
         return HTTPException(status_code=401, detail="No access token appended")
 
     try:
-        current_user: User = get_current_user(token.split(" ")[1])  # pyright: ignore
+        current_user = get_current_user(token.split(" ")[1])
+        if not current_user:
+            raise RecordNotFound(msg="User was not found.")
     except InvalidBearerToken as e:
         raise HTTPException(status_code=401, detail=e.msg)
     except RecordNotFound as e:
@@ -280,10 +282,9 @@ async def login_page_post(
     request: Request,
     username: Annotated[str, Form()],
     password: Annotated[str, Form()],
-    cf_token: Annotated[str | None, Form()] = None,
-    notification: Notification | None = None,
+    cf_token: Annotated[str | None, Form(alias="cf-turnstile-response")] = None,
+    notification: str | None = None,
 ):
-
     context = {
         "title": "Login",
         "description": "Login to your BAT account.",
@@ -300,6 +301,7 @@ async def login_page_post(
     status_code = 200
 
     if CF_TURNSTILE_ENABLED:
+        print(f"token: {cf_token}")
         context["cf_turnstile_enabled"] = True
         context["cf_turnstile_site_key"] = CF_TURNSTILE_SITE_KEY
 
@@ -311,7 +313,10 @@ async def login_page_post(
         if "@" in username:
             username = user_service.username_from_email(username)
 
+        print("here?")
+        print(f"username: {username}, password: {password}")
         token = handle_token_creation(username=username, password=password)
+        print("here not?")
 
         current_user = auth_user(username=username, password=password)
         user_role = current_user.role.value
