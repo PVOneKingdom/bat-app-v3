@@ -5,4 +5,4 @@ python-multipart
 python-dotenv
 requests
 babel
-bcrypt
+bcrypt==4.3.0

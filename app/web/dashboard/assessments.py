@@ -20,7 +20,6 @@ from app.service.authentication import user_htmx_dep
 import app.service.user as user_service
 import app.service.assessment as service
 import app.service.note as note_service
-from app.web import prepare_notification
 
 
 router = APIRouter()

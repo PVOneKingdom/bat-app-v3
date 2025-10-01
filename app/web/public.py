@@ -28,8 +28,6 @@ from app.service.authentication import (
     cf_verify_response,
 )
 
-from app.web import prepare_notification
-
 
 router = APIRouter()
 
@@ -109,12 +107,10 @@ def get_password_reset(request: Request):
 
     # Disable password reset form when no SMTP is enabled
     if not SMTP_ENABLED:
-        notification = prepare_notification(
-            show=True,
-            notification_type="warning",
-            notification_content="Mail server not configured, ask your coach to reset password for you.",
+        context["notification"] = Notification(
+            style="warning",
+            content="Mail server not configured, ask your coach to reset password for you.",
         )
-        context.update(notification)
 
     response = jinja.TemplateResponse(
         name="public/password-reset.html",
@@ -137,12 +133,9 @@ def post_password_reset(request: Request, email_reset_data: PasswordResetRequest
         user_service.create_password_reset_token(
             email=email_reset_data.email, request=request
         )
-        notification = prepare_notification(
-            show=True,
-            notification_type="success",
-            notification_content="If email exists, we sent there reset link.",
+        context["notification"] = Notification(
+            style="success", content="If email exists, we sent there reset link."
         )
-        context.update(notification)
     except Exception as e:
         # NotImplemented
         pass
@@ -166,12 +159,9 @@ def get_set_password(request: Request, reset_token: str | None = None):
     }
 
     if not reset_token:
-        context.update(
-            prepare_notification(
-                True,
-                "warning",
-                "Token missing, invalid or missing try to request password reset again.",
-            )
+        context["notification"] = Notification(
+            style="warning",
+            content="Token missing, invalid or missing try to request password reset again.",
         )
     else:
 
@@ -185,14 +175,10 @@ def get_set_password(request: Request, reset_token: str | None = None):
                 f"{email_split[0][0:2]}..{email_split[0][-2:]}@{email_split[1][0:2]}...{tld}"
             )
         except RecordNotFound:
-            context.update(
-                prepare_notification(
-                    True,
-                    "warning",
-                    "Token missing, invalid or missing try to request password reset again.",
-                )
+            context["notification"] = Notification(
+                style="warning",
+                content="Token missing, invalid or missing try to request password reset again.",
             )
-
     response = jinja.TemplateResponse(
         name="public/password-set.html",
         context=context,
@@ -213,10 +199,8 @@ def post_set_password(request: Request, set_new_password: UserSetNewPassword):
     try:
         user = user_service.set_password_with_token(set_new_password=set_new_password)
         context["user"] = user
-        context.update(
-            prepare_notification(
-                True, "success", f"Password for {user.username} has been set."
-            )
+        context["notification"] = Notification(
+            style="success", content=f"Password for {user.username} has been set."
         )
     except Exception as e:
         # NotImplemented
@@ -313,10 +297,7 @@ async def login_page_post(
         if "@" in username:
             username = user_service.username_from_email(username)
 
-        print("here?")
-        print(f"username: {username}, password: {password}")
         token = handle_token_creation(username=username, password=password)
-        print("here not?")
 
         current_user = auth_user(username=username, password=password)
         user_role = current_user.role.value

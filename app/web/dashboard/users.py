@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 from sqlite3 import IntegrityError
 
 from app.exception.database import RecordNotFound, UsernameOrEmailNotUnique
+from app.exception.service import SMTPCredentialsNotSet
 from app.exception.service import (
     EndpointDataMismatch,
     InvalidFormEntry,
@@ -10,10 +11,10 @@ from app.exception.service import (
     Unauthorized,
 )
 from app.model.user import User, UserCreate, UserUpdate
+from app.model.notification import Notification
 from app.config import SMTP_ENABLED
 from app.template.init import jinja
 from app.service.authentication import user_htmx_dep
-from app.web import prepare_notification
 import app.service.user as service
 
 
@@ -80,30 +81,30 @@ async def add_user_post(
             user=new_user, request=request, current_user=current_user
         )
         notification_content = f"User {created_user.username} created!"
-        if not SMTP_ENABLED:
-            notification_content += (
-                " Mail server not configured. You need to notify user manually."
-            )
-        context.update(prepare_notification(True, "success", notification_content))
+        context["notification"] = Notification(
+            style="success", content=notification_content
+        )
+    except SMTPCredentialsNotSet as e:
+        context["notification"] = Notification(
+            style="warning",
+            content=e.msg,
+        )
     except SendingEmailFailed as e:
         created_user = service.get_by_email(
             email=new_user.email, current_user=current_user
         )
-        context.update(
-            prepare_notification(
-                True,
-                "warning",
-                f"User {created_user.username} was created but email wasn't sent. Verify the credentials.",
-            )
+        context["notification"] = Notification(
+            style="warning",
+            content=f"User {created_user.username} was created but email wasn't sent. Verify the credentials.",
         )
     except Unauthorized as e:
-        context.update(prepare_notification(True, "danger", e.msg))
+        context["notification"] = Notification(style="danger", content=e.msg)
         status_code = 401
     except UsernameOrEmailNotUnique as e:
-        context.update(prepare_notification(True, "warning", e.msg))
+        context["notification"] = Notification(style="warning", content=e.msg)
         status_code = 422
     except InvalidFormEntry as e:
-        context.update(prepare_notification(True, "warning", e.msg))
+        context["notification"] = Notification(style="warning", content=e.msg)
         status_code = 422
 
     template_response = jinja.TemplateResponse(
@@ -164,23 +165,21 @@ async def update_user(
     try:
         edited_user: User = service.update(user_id, updated_user, current_user)
         context["user_for_edit"] = edited_user
-        context.update(
-            prepare_notification(
-                True, "success", f"User {edited_user.username} updated!"
-            )
+        context["notification"] = Notification(
+            style="success", content=f"User {edited_user.username} updated!"
         )
     except RecordNotFound as e:
         status_code = 404
-        context.update(prepare_notification(True, "warning", e.msg))
+        context["notification"] = Notification(style="warning", content=e.msg)
     except Unauthorized as e:
         status_code = 401
-        context.update(prepare_notification(True, "danger", e.msg))
+        context["notification"] = Notification(style="danger", content=e.msg)
     except EndpointDataMismatch as e:
         status_code = 403
-        context.update(prepare_notification(True, "danger", e.msg))
+        context["notification"] = Notification(style="danger", content=e.msg)
     except UsernameOrEmailNotUnique as e:
         status_code = 403
-        context.update(prepare_notification(True, "danger", e.msg))
+        context["notification"] = Notification(style="danger", content="")
 
     template_response = jinja.TemplateResponse(
         name="dashboard/user-edit.html", context=context, status_code=status_code
@@ -203,23 +202,20 @@ async def delete_user(
 
     try:
         deleted_user: User = service.delete(user_id, current_user)
-        context.update(
-            prepare_notification(
-                True, "success", f"User {deleted_user.username} was deleted."
-            )
+        context["notification"] = Notification(
+            style="success", content=f"User {deleted_user.username} was deleted."
         )
     except RecordNotFound as e:
-        context.update(prepare_notification(True, "warning", e.msg))
+        context["notification"] = Notification(style="warning", content=e.msg)
     except Unauthorized as e:
-        context.update(prepare_notification(True, "danger", e.msg))
+        context["notification"] = Notification(style="danger", content=e.msg)
     except IntegrityError as e:
         error_message = str(e).lower()
         if "FOREIGN KEY constraint failed".lower() in error_message:
             user = service.get(user_id=user_id, current_user=current_user)
-            notifcation = prepare_notification(
-                show=True,
-                notification_type="warning",
-                notification_content=f"User {user.username} has still some resources attached. Try checking the assessments and reassigning them to someone else before deletion.",
+            notifcation = Notification(
+                style="warning",
+                content=f"User {user.username} has still some resources attached. Try checking the assessments and reassigning them to someone else before deletion.",
             )
             context.update(notifcation)
 

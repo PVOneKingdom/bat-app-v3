@@ -133,7 +133,7 @@ def send_html_email(recipient_email: str, subject: str, html_message: str) -> bo
 
     if not SMTP_ENABLED:
         raise SMTPCredentialsNotSet(
-            msg="SMTP credentials are not set. Cannot send mails."
+            msg="SMTP credentials are not set. You need to notify user manually."
         )
 
     try:
