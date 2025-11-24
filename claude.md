@@ -562,21 +562,26 @@ BAT App v3 is optimized for Railway deployment with:
 - `FORCE_HTTPS_PATHS=True` (recommended)
 - Optional: SMTP settings, Cloudflare Turnstile keys
 
-**Critical: Persistent Volumes**
+**Critical: Persistent Volume**
 
-Railway uses ephemeral storage - volumes are REQUIRED for production:
+Railway uses ephemeral storage - a volume is REQUIRED for production.
 
-| Volume | Mount Path | Purpose | Size |
-|--------|------------|---------|------|
-| Database | `/app/app/db` | SQLite database + WAL files | 1GB+ |
-| Uploads | `/app/app/uploads` | User uploads, report SVGs | 2GB+ |
+**Single Volume Design (Free Tier Compatible):**
 
-Without volumes, all data is lost on each deployment.
+| Mount Path | Purpose | Size |
+|------------|---------|------|
+| `/app/app/data` | ALL persistent data (database + uploads) | 2GB+ |
+
+**Internal Structure:**
+- `/app/app/data/db/` - SQLite database + WAL files
+- `/app/app/data/uploads/` - User uploads, report SVGs
+
+Without a volume, all data is lost on each deployment. The application automatically creates the internal directory structure.
 
 **Deployment Process:**
 1. Connect GitHub repository to Railway
 2. Configure environment variables
-3. Add persistent volumes
+3. Add persistent volume at `/app/app/data`
 4. Deploy automatically on git push
 
 See README.md for detailed Railway deployment instructions including troubleshooting guide.

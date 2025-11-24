@@ -1,8 +1,17 @@
 from dotenv import load_dotenv
 import os
+from pathlib import Path
 from app.exception.service import InvalidConstantValue
 
 load_dotenv()
+
+# Centralized path configuration for single volume deployment
+# All persistent data stored under /app/data/ directory
+APP_ROOT = Path(__file__).resolve().parent.parent
+DATA_ROOT = APP_ROOT / "data"
+DB_DIR = DATA_ROOT / "db"
+UPLOADS_DIR = DATA_ROOT / "uploads"
+DB_PATH = DB_DIR / "database.db"
 
 SECRET_KEY_ENV = os.getenv("SECRET_KEY")
 if SECRET_KEY_ENV is None:

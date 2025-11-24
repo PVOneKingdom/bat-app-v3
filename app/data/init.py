@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from sqlite3 import connect, Connection, Cursor
+from app.config import DB_PATH, DB_DIR
 
 # Global variables for the database connection and cursor, along with an initialization flag
 conn: Connection
@@ -14,10 +15,14 @@ def get_db(name: str | None = None):
     if db_initialized:
         return conn, curs
 
-    # Determine database name if not provided
+    # Determine database path - use centralized config
     if not name:
-        top_dir = Path(__file__).resolve().parent.parent
-        db_path = str(top_dir / "db" / "database.db")
+        db_path = str(DB_PATH)
+    else:
+        db_path = name
+
+    # Ensure database directory exists
+    DB_DIR.mkdir(parents=True, exist_ok=True)
 
     # Establish new connection and cursor
     conn = connect(db_path, check_same_thread=False)

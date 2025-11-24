@@ -86,63 +86,70 @@ Copy the output and paste it as the `SECRET_KEY` value in Railway.
 
 ### Persistent Storage on Railway (CRITICAL)
 
-**⚠️ IMPORTANT:** Railway uses ephemeral storage by default, meaning all data is lost on each deployment. You **MUST** configure volumes for production use.
+**⚠️ IMPORTANT:** Railway uses ephemeral storage by default, meaning all data is lost on each deployment. You **MUST** configure a volume for production use.
 
-#### Why Volumes Are Required
+#### Why a Volume Is Required
 
-Without persistent volumes:
+Without a persistent volume:
 - ❌ Database is recreated on every deployment (all assessments, users, reports lost)
 - ❌ Uploaded files disappear after redeployment
 - ❌ Default admin user reset on each deployment
 
-#### Required Volumes Configuration
+#### Single Volume Configuration
 
-Railway supports persistent volumes that survive deployments. You need **TWO volumes**:
+**Railway's free tier allows ONE volume per service.** BAT App v3 is optimized to use a single volume for all persistent data:
 
-**Volume 1: Database Storage**
-- **Mount Path:** `/app/app/db`
-- **Purpose:** Stores SQLite database file (`database.db`) and WAL files
-- **Recommended Size:** Start with 1GB (SQLite is very space-efficient)
-- **Critical:** Without this, all user data, assessments, and reports are lost on redeploy
+**Data Volume (All Persistent Storage)**
+- **Mount Path:** `/app/app/data`
+- **Purpose:** Contains ALL persistent data in subdirectories:
+  - `data/db/` - SQLite database and WAL files
+  - `data/uploads/` - User-uploaded files and report visualizations (SVG wheels)
+- **Recommended Size:** Start with 2GB (expandable as needed)
+- **Critical:** Without this volume, ALL data is lost on redeploy
 
-**Volume 2: Uploads Storage**
-- **Mount Path:** `/app/app/uploads`
-- **Purpose:** Stores user-uploaded files and generated report visualizations (SVG wheels)
-- **Recommended Size:** Start with 2GB (depends on usage)
-- **Critical:** Without this, report images and user uploads are lost on redeploy
-
-#### How to Add Volumes in Railway
+#### How to Add Volume in Railway
 
 1. **Open your Railway project** and select your service
 2. **Go to Settings tab** → scroll to "Volumes" section
-3. **Add Database Volume:**
+3. **Add the Data Volume:**
    - Click **"+ Add Volume"**
-   - **Mount Path:** `/app/app/db`
-   - **Name:** `bat-app-database` (or your preference)
+   - **Mount Path:** `/app/app/data`
    - Click **"Add"**
-4. **Add Uploads Volume:**
-   - Click **"+ Add Volume"** again
-   - **Mount Path:** `/app/app/uploads`
-   - **Name:** `bat-app-uploads` (or your preference)
-   - Click **"Add"**
-5. **Redeploy** your application for volumes to take effect
+4. **Redeploy** your application for the volume to take effect
+
+**That's it!** One volume contains everything.
+
+#### Directory Structure
+
+The application automatically creates this structure inside your volume:
+
+```
+/app/app/data/
+├── db/
+│   ├── database.db
+│   ├── database.db-wal
+│   └── database.db-shm
+└── uploads/
+    ├── report-wheel-uuid1.svg
+    ├── report-wheel-uuid2.svg
+    └── ...
+```
 
 #### Verification
 
-After adding volumes and redeploying:
+After adding the volume and redeploying:
 1. Log in to your application
-2. Create a test assessment
+2. Create a test assessment and generate a report
 3. Trigger a redeploy (push a small change to GitHub)
-4. Log in again - your test assessment should still be there ✅
+4. Log in again - your test data should still be there ✅
 
-#### Volume Paths Summary
+#### Volume Summary
 
-| Data Type | Mount Path | Files Stored | Persistence |
-|-----------|------------|--------------|-------------|
-| Database | `/app/app/db` | `database.db`, `database.db-wal`, `database.db-shm` | Required |
-| Uploads | `/app/app/uploads` | User uploads, report SVGs | Required |
+| Mount Path | Contents | Size | Railway Tier |
+|------------|----------|------|--------------|
+| `/app/app/data` | Database + Uploads | 2GB+ | Free ✅ |
 
-**Note:** The `/app` prefix in mount paths corresponds to the working directory set by Railway. Inside the application code, these directories are referenced as `app/db` and `app/uploads` relative to the project root.
+**Note:** The application creates the internal directory structure (`data/db/` and `data/uploads/`) automatically on first run.
 
 ### Updating Your Deployment
 

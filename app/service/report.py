@@ -15,6 +15,7 @@ from app.model.assesment import Assessment, AssessmentQA
 from app.exception.service import EndpointDataMismatch, Unauthorized
 
 from app.template.init import jinja
+from app.config import UPLOADS_DIR
 
 
 # -------------------------------
@@ -80,12 +81,10 @@ def delete_report(report_id: str, current_user: User) -> Report:
     if not current_user.can_manage_reports():
         raise Unauthorized(msg="You cannot manage reports.")
 
-    from app.main import app_root_path
-
-    try: 
+    try:
         report = data.delete_report(report_id=report_id)
         if report.wheel_filename:
-            os.remove(app_root_path / "uploads" / report.wheel_filename)
+            os.remove(UPLOADS_DIR / report.wheel_filename)
     except Exception as e:
         # Not sure what can go wrong here
         raise e
@@ -175,9 +174,10 @@ def create_wheel_snapshot(assessment_id: str, current_user: User) -> str:
 
     context = {}
 
-    from app.main import app_root_path
-
     filename = str(uuid.uuid4()) + ".svg"
+
+    # Ensure uploads directory exists
+    UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
     assessment_qa: list[AssessmentQA] = assessment_service.get_all_qa(assessment_id=assessment_id, current_user=current_user)
     context["wheel"] = assessment_service.prepare_wheel_context(assessment_qa)
@@ -185,7 +185,7 @@ def create_wheel_snapshot(assessment_id: str, current_user: User) -> str:
     template = jinja.env.get_template("wheel/wheel-report.svg")
     content = template.render(context)
 
-    with open(app_root_path / "uploads" / filename, "w") as file:
+    with open(UPLOADS_DIR / filename, "w") as file:
         file.write(content)
 
     return filename
