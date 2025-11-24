@@ -84,14 +84,65 @@ Copy the output and paste it as the `SECRET_KEY` value in Railway.
 2. Log in with the credentials you set in `DEFAULT_USER` and `DEFAULT_PASSWORD`
 3. Change the default password immediately after first login
 
-### Persistent Storage on Railway
+### Persistent Storage on Railway (CRITICAL)
 
-**Important:** Railway uses ephemeral storage by default. For production use:
+**⚠️ IMPORTANT:** Railway uses ephemeral storage by default, meaning all data is lost on each deployment. You **MUST** configure volumes for production use.
 
-1. Go to your Railway project settings
-2. Add a **Volume** to persist:
-   - Database files: Mount at `/bat-app/app/db`
-   - Uploaded files: Mount at `/bat-app/app/uploads`
+#### Why Volumes Are Required
+
+Without persistent volumes:
+- ❌ Database is recreated on every deployment (all assessments, users, reports lost)
+- ❌ Uploaded files disappear after redeployment
+- ❌ Default admin user reset on each deployment
+
+#### Required Volumes Configuration
+
+Railway supports persistent volumes that survive deployments. You need **TWO volumes**:
+
+**Volume 1: Database Storage**
+- **Mount Path:** `/app/app/db`
+- **Purpose:** Stores SQLite database file (`database.db`) and WAL files
+- **Recommended Size:** Start with 1GB (SQLite is very space-efficient)
+- **Critical:** Without this, all user data, assessments, and reports are lost on redeploy
+
+**Volume 2: Uploads Storage**
+- **Mount Path:** `/app/app/uploads`
+- **Purpose:** Stores user-uploaded files and generated report visualizations (SVG wheels)
+- **Recommended Size:** Start with 2GB (depends on usage)
+- **Critical:** Without this, report images and user uploads are lost on redeploy
+
+#### How to Add Volumes in Railway
+
+1. **Open your Railway project** and select your service
+2. **Go to Settings tab** → scroll to "Volumes" section
+3. **Add Database Volume:**
+   - Click **"+ Add Volume"**
+   - **Mount Path:** `/app/app/db`
+   - **Name:** `bat-app-database` (or your preference)
+   - Click **"Add"**
+4. **Add Uploads Volume:**
+   - Click **"+ Add Volume"** again
+   - **Mount Path:** `/app/app/uploads`
+   - **Name:** `bat-app-uploads` (or your preference)
+   - Click **"Add"**
+5. **Redeploy** your application for volumes to take effect
+
+#### Verification
+
+After adding volumes and redeploying:
+1. Log in to your application
+2. Create a test assessment
+3. Trigger a redeploy (push a small change to GitHub)
+4. Log in again - your test assessment should still be there ✅
+
+#### Volume Paths Summary
+
+| Data Type | Mount Path | Files Stored | Persistence |
+|-----------|------------|--------------|-------------|
+| Database | `/app/app/db` | `database.db`, `database.db-wal`, `database.db-shm` | Required |
+| Uploads | `/app/app/uploads` | User uploads, report SVGs | Required |
+
+**Note:** The `/app` prefix in mount paths corresponds to the working directory set by Railway. Inside the application code, these directories are referenced as `app/db` and `app/uploads` relative to the project root.
 
 ### Updating Your Deployment
 
@@ -102,6 +153,55 @@ git add .
 git commit -m "Update application"
 git push origin main
 ```
+
+### Troubleshooting Railway Deployment
+
+#### Issue: "RuntimeError: Directory does not exist"
+**Symptom:** App crashes on startup with `RuntimeError: Directory '/app/app/uploads' does not exist`
+
+**Solution:** This is fixed in version 3.0.9+. The app now automatically creates required directories. If you're on an older version:
+```bash
+git pull origin main
+# Redeploy on Railway
+```
+
+#### Issue: Data lost after redeployment
+**Symptom:** All assessments, users, and uploads disappear after pushing new code
+
+**Solution:** You haven't configured persistent volumes. See [Persistent Storage](#persistent-storage-on-railway-critical) section above.
+
+#### Issue: Can't log in after deployment
+**Symptom:** Login fails or redirects to login page repeatedly
+
+**Possible causes:**
+1. **Wrong credentials:** Check your Railway environment variables for `DEFAULT_USER` and `DEFAULT_PASSWORD`
+2. **SECRET_KEY not set:** Verify `SECRET_KEY` is configured in Railway environment variables
+3. **HTTPS redirect issue:** If behind a reverse proxy, ensure `FORCE_HTTPS_PATHS=True` is set
+
+#### Issue: Application crashes immediately
+**Check Railway logs** for specific errors:
+1. Go to your Railway project
+2. Click on your service
+3. Go to "Deployments" tab
+4. Click on the latest deployment
+5. Check logs for error messages
+
+Common errors:
+- **"Secret Key value is None"** → Set `SECRET_KEY` in environment variables
+- **"ModuleNotFoundError"** → Dependency missing, check `requirements.txt`
+- **"Address already in use"** → Railway assigns `$PORT` dynamically, ensure Procfile uses it
+
+#### Issue: SMTP emails not sending
+**Solution:** Verify all SMTP environment variables are set:
+```
+SMTP_LOGIN=your-email@example.com
+SMTP_PASSWORD=your-app-password
+SMTP_EMAIL=noreply@yourdomain.com
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+```
+
+For Gmail, use an [App Password](https://support.google.com/accounts/answer/185833), not your regular password.
 
 ---
 

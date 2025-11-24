@@ -32,6 +32,10 @@ from app.web.app.profile import router as app_profile_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Ensure required directories exist before app starts
+    app_root_path = Path(__file__).resolve().parent
+    (app_root_path / "uploads").mkdir(parents=True, exist_ok=True)
+    (app_root_path / "db").mkdir(parents=True, exist_ok=True)
 
     add_default_user()
     add_default_questions()

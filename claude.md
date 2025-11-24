@@ -537,7 +537,46 @@ BAT App v3 is a well-architected, modern Python web application that successfull
 - **Security-First Design**: JWT authentication, bcrypt hashing, RBAC throughout
 - **Rich Visualizations**: SVG-based "wheel" charts for assessment progress
 - **Progressive Enhancement**: HTMX for modern UX while maintaining accessibility
-- **Flexible Deployment**: Runs standalone or containerized
+- **Flexible Deployment**: Runs standalone, containerized, or on Railway.app
 - **Extensible Design**: Layered architecture supports future enhancements
 
 The application demonstrates solid engineering practices including dependency injection, exception-driven flow control, and consistent model-to-dict conversion patterns. The codebase is maintainable, testable, and ready for production deployment with proper environment configuration.
+
+---
+
+## Deployment Notes
+
+### Railway.app Deployment
+
+BAT App v3 is optimized for Railway deployment with:
+
+**Files:**
+- `Procfile` - Defines start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- Automatic directory creation for `app/db` and `app/uploads` on startup
+
+**Required Environment Variables:**
+- `SECRET_KEY` (generate with `openssl rand -hex 32`)
+- `ALGORITHM=HS256`
+- `ACCESS_TOKEN_EXPIRE_MINUTES=30`
+- `DEFAULT_USER`, `DEFAULT_EMAIL`, `DEFAULT_PASSWORD`
+- `FORCE_HTTPS_PATHS=True` (recommended)
+- Optional: SMTP settings, Cloudflare Turnstile keys
+
+**Critical: Persistent Volumes**
+
+Railway uses ephemeral storage - volumes are REQUIRED for production:
+
+| Volume | Mount Path | Purpose | Size |
+|--------|------------|---------|------|
+| Database | `/app/app/db` | SQLite database + WAL files | 1GB+ |
+| Uploads | `/app/app/uploads` | User uploads, report SVGs | 2GB+ |
+
+Without volumes, all data is lost on each deployment.
+
+**Deployment Process:**
+1. Connect GitHub repository to Railway
+2. Configure environment variables
+3. Add persistent volumes
+4. Deploy automatically on git push
+
+See README.md for detailed Railway deployment instructions including troubleshooting guide.
